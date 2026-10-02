@@ -2,10 +2,32 @@ import { act, renderHook, waitFor } from '@testing-library/react-native';
 
 import {
   useCreateFeeding,
+  useFeedings,
   useFeedingsByGecko,
   useLatestFeeding,
 } from '@/lib/hooks/use-feedings';
 import { createTestWrapper } from '../../support/query-wrapper';
+
+describe('useFeedings', () => {
+  it('owner の全記録を新しい順で返す', async () => {
+    const { wrapper, feedings, ownerId } = createTestWrapper();
+    await feedings.create(ownerId, {
+      geckoId: 'g1',
+      foodType: 'A',
+      fedAt: '2026-01-01T00:00:00.000Z',
+    });
+    await feedings.create(ownerId, {
+      geckoId: 'g2',
+      foodType: 'B',
+      fedAt: '2026-01-02T00:00:00.000Z',
+    });
+
+    const { result } = await renderHook(() => useFeedings(), { wrapper });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(result.current.data?.map((f) => f.foodType)).toEqual(['B', 'A']);
+  });
+});
 
 describe('useFeedingsByGecko', () => {
   it('指定個体の記録を新しい順で返す', async () => {

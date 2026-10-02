@@ -27,4 +27,24 @@ describe('GeckoCard', () => {
     fireEvent.press(getByText('ポチ'));
     expect(onPress).toHaveBeenCalledWith('g1');
   });
+
+  it('lastFedAt が null なら「給餌記録なし」バッジを表示する', async () => {
+    const { getByText } = await render(
+      <GeckoCard gecko={makeGecko({ name: 'レオ' })} lastFedAt={null} />,
+    );
+    expect(getByText('給餌記録なし')).toBeTruthy();
+  });
+
+  it('lastFedAt があれば「前回給餌 ◯日前」を表示する', async () => {
+    const twoDaysAgo = new Date(Date.now() - 2 * 86_400_000).toISOString();
+    const { getByText } = await render(
+      <GeckoCard gecko={makeGecko({ name: 'レオ' })} lastFedAt={twoDaysAgo} />,
+    );
+    expect(getByText('前回給餌 2日前')).toBeTruthy();
+  });
+
+  it('lastFedAt を渡さなければバッジを表示しない', async () => {
+    const { queryByText } = await render(<GeckoCard gecko={makeGecko({ name: 'レオ' })} />);
+    expect(queryByText('給餌記録なし')).toBeNull();
+  });
 });

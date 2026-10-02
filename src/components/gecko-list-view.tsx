@@ -8,13 +8,21 @@ export interface GeckoListViewProps {
   isError: boolean;
   geckos: Gecko[];
   onSelectGecko?: (id: string) => void;
+  /** 各個体の前回給餌日時（ISO）を返す。undefined を返すとバッジ非表示。 */
+  lastFedAtOf?: (geckoId: string) => string | null | undefined;
 }
 
 /**
  * 個体一覧の見た目（props のみ）。読込中・エラー・空・一覧の 4 状態を描画する。
  * データ取得は呼び出し側（ルート）で useGeckos から渡す。
  */
-export function GeckoListView({ isLoading, isError, geckos, onSelectGecko }: GeckoListViewProps) {
+export function GeckoListView({
+  isLoading,
+  isError,
+  geckos,
+  onSelectGecko,
+  lastFedAtOf,
+}: GeckoListViewProps) {
   if (isLoading) {
     return (
       <View testID="gecko-list-loading" style={styles.center}>
@@ -47,7 +55,9 @@ export function GeckoListView({ isLoading, isError, geckos, onSelectGecko }: Gec
       contentContainerStyle={styles.listContent}
       data={geckos}
       keyExtractor={(g) => g.id}
-      renderItem={({ item }) => <GeckoCard gecko={item} onPress={onSelectGecko} />}
+      renderItem={({ item }) => (
+        <GeckoCard gecko={item} onPress={onSelectGecko} lastFedAt={lastFedAtOf?.(item.id)} />
+      )}
       ItemSeparatorComponent={() => <View style={styles.separator} />}
     />
   );

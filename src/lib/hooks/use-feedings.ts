@@ -5,11 +5,22 @@ import { useFeedingRepository } from '../repository';
 import { useOwnerId } from '../session';
 
 export const feedingKeys = {
+  all: (ownerId: string) => ['feedings', ownerId, 'all'] as const,
   byGecko: (ownerId: string, geckoId: string) =>
     ['feedings', ownerId, 'gecko', geckoId] as const,
   latest: (ownerId: string, geckoId: string) =>
     ['feedings', ownerId, 'latest', geckoId] as const,
 };
+
+/** owner の全餌やり記録（新しい順）。一覧の給餌バッジ算出などに使う。 */
+export function useFeedings() {
+  const repo = useFeedingRepository();
+  const ownerId = useOwnerId();
+  return useQuery({
+    queryKey: feedingKeys.all(ownerId),
+    queryFn: () => repo.list(ownerId),
+  });
+}
 
 /** 指定個体の餌やり記録（新しい順）。 */
 export function useFeedingsByGecko(geckoId: string) {
@@ -41,6 +52,7 @@ export function useCreateFeeding() {
   return useMutation({
     mutationFn: (input: FeedingCreateInput) => repo.create(ownerId, input),
     onSuccess: (feeding) => {
+      queryClient.invalidateQueries({ queryKey: feedingKeys.all(ownerId) });
       queryClient.invalidateQueries({
         queryKey: feedingKeys.byGecko(ownerId, feeding.geckoId),
       });

@@ -26,4 +26,18 @@ describe('GeckosScreen (route)', () => {
 
     await waitFor(() => expect(getByText('個体がいません')).toBeTruthy());
   });
+
+  it('給餌記録があればカードに前回給餌バッジを表示する', async () => {
+    const { wrapper, geckos, feedings, ownerId } = createTestWrapper();
+    const g = await geckos.create(ownerId, { name: 'レオ' });
+    await feedings.create(ownerId, {
+      geckoId: g.id,
+      foodType: 'コオロギ',
+      fedAt: new Date(Date.now() - 2 * 86_400_000).toISOString(),
+    });
+
+    const { getByText } = await render(<GeckosScreen />, { wrapper });
+
+    await waitFor(() => expect(getByText('前回給餌 2日前')).toBeTruthy());
+  });
 });

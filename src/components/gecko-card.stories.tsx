@@ -30,6 +30,12 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
+const daysAgo = (n: number) => new Date(Date.now() - n * 86_400_000).toISOString();
+
 export const Male: Story = {};
 export const Female: Story = { args: { gecko: sample({ name: 'ナナ', sex: 'female', morph: 'タンジェリン' }) } };
 export const Unknown: Story = { args: { gecko: sample({ name: 'まめ', sex: 'unknown', morph: null }) } };
+
+export const RecentlyFed: Story = { args: { lastFedAt: daysAgo(2) } };
+export const Overdue: Story = { args: { gecko: sample({ feedingIntervalDays: 5 }), lastFedAt: daysAgo(10) } };
+export const NoFeeding: Story = { args: { lastFedAt: null } };
