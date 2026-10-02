@@ -1,4 +1,5 @@
-import { Tabs } from 'expo-router';
+import { Link, Tabs } from 'expo-router';
+import { StyleSheet, Text } from 'react-native';
 
 export default function TabsLayout() {
   return (
@@ -11,7 +12,26 @@ export default function TabsLayout() {
         tabBarInactiveTintColor: '#8A8F98',
       }}>
       <Tabs.Screen name="index" options={{ title: 'ホーム' }} />
-      <Tabs.Screen name="geckos" options={{ title: '個体' }} />
+      <Tabs.Screen
+        name="geckos"
+        options={{
+          title: '個体',
+          headerRight: () => (
+            <Link href="/geckos/new" style={styles.addButton}>
+              追加
+            </Link>
+          ),
+        }}
+      />
     </Tabs>
   );
 }
+
+const styles = StyleSheet.create({
+  addButton: {
+    color: '#F0B65A',
+    fontSize: 16,
+    fontWeight: '700',
+    paddingHorizontal: 16,
+  },
+});
