@@ -112,11 +112,12 @@ describe('InMemoryGeckoRepository', () => {
   describe('update', () => {
     it('指定フィールドだけ更新し、updatedAt を進め、createdAt は保持する', async () => {
       const repo = makeRepo();
-      const g = await repo.create(OWNER, { name: 'A', morph: 'ノーマル' });
+      const g = await repo.create(OWNER, { name: 'A', morph: 'ノーマル', sex: 'male' });
       const u = await repo.update(OWNER, g.id, { name: 'B' });
 
       expect(u.name).toBe('B');
       expect(u.morph).toBe('ノーマル'); // 渡していないので変化しない
+      expect(u.sex).toBe('male'); // default で上書きされない
       expect(u.createdAt).toBe(g.createdAt);
       expect(u.updatedAt > g.updatedAt).toBe(true);
     });

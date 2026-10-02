@@ -1,0 +1,64 @@
+import { act, renderHook, waitFor } from '@testing-library/react-native';
+
+import {
+  useCreateFeeding,
+  useFeedingsByGecko,
+  useLatestFeeding,
+} from '@/lib/hooks/use-feedings';
+import { createTestWrapper } from '../../support/query-wrapper';
+
+describe('useFeedingsByGecko', () => {
+  it('指定個体の記録を新しい順で返す', async () => {
+    const { wrapper, feedings, ownerId } = createTestWrapper();
+    await feedings.create(ownerId, {
+      geckoId: 'g1',
+      foodType: 'A',
+      fedAt: '2026-01-01T00:00:00.000Z',
+    });
+    await feedings.create(ownerId, {
+      geckoId: 'g1',
+      foodType: 'B',
+      fedAt: '2026-01-03T00:00:00.000Z',
+    });
+
+    const { result } = await renderHook(() => useFeedingsByGecko('g1'), { wrapper });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(result.current.data?.map((f) => f.foodType)).toEqual(['B', 'A']);
+  });
+});
+
+describe('useLatestFeeding', () => {
+  it('最新の記録を返す', async () => {
+    const { wrapper, feedings, ownerId } = createTestWrapper();
+    await feedings.create(ownerId, {
+      geckoId: 'g1',
+      foodType: 'A',
+      fedAt: '2026-01-01T00:00:00.000Z',
+    });
+    await feedings.create(ownerId, {
+      geckoId: 'g1',
+      foodType: 'latest',
+      fedAt: '2026-01-05T00:00:00.000Z',
+    });
+
+    const { result } = await renderHook(() => useLatestFeeding('g1'), { wrapper });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(result.current.data?.foodType).toBe('latest');
+  });
+});
+
+describe('useCreateFeeding', () => {
+  it('餌やりを記録する', async () => {
+    const { wrapper, feedings, ownerId } = createTestWrapper();
+    const { result } = await renderHook(() => useCreateFeeding(), { wrapper });
+
+    await act(async () => {
+      await result.current.mutateAsync({ geckoId: 'g1', foodType: 'コオロギ' });
+    });
+
+    const list = await feedings.listByGecko(ownerId, 'g1');
+    expect(list.map((f) => f.foodType)).toEqual(['コオロギ']);
+  });
+});

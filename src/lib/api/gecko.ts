@@ -22,8 +22,19 @@ export const geckoCreateInputSchema = z.object({
   feedingIntervalDays: z.number().int().positive().nullable().optional(),
 });
 
-/** 更新時は全項目任意（渡した項目だけ更新）。 */
-export const geckoUpdateInputSchema = geckoCreateInputSchema.partial();
+/**
+ * 更新時は全項目任意（渡した項目だけ更新）。create と違い default は持たせない
+ * （zod の .partial() は default を保持してしまい、未指定項目が既定値で上書きされるため）。
+ */
+export const geckoUpdateInputSchema = z.object({
+  name: z.string().trim().min(1, '名前は必須です').optional(),
+  enclosureId: z.string().min(1).nullable().optional(),
+  morph: z.string().trim().min(1).nullable().optional(),
+  sex: geckoSexSchema.optional(),
+  hatchedOn: dateOnly.nullable().optional(),
+  photoPath: z.string().min(1).nullable().optional(),
+  feedingIntervalDays: z.number().int().positive().nullable().optional(),
+});
 
 export type GeckoCreateInput = z.input<typeof geckoCreateInputSchema>;
 export type GeckoUpdateInput = z.input<typeof geckoUpdateInputSchema>;
