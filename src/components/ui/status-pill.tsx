@@ -1,6 +1,8 @@
 import { StyleSheet, Text, View } from 'react-native';
 
-export type HealthStatus = 'normal' | 'warning' | 'danger';
+import type { HealthStatus } from '@/lib/health-status';
+
+export type { HealthStatus };
 
 const STATUS: Record<HealthStatus, { color: string; icon: string; label: string }> = {
   normal: { color: '#2E9E6B', icon: '●', label: '正常' },
