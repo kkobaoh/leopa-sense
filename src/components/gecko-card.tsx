@@ -1,12 +1,7 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import type { Gecko, GeckoSex } from '@/lib/api';
-
-const SEX_LABEL: Record<GeckoSex, string> = {
-  male: 'オス',
-  female: 'メス',
-  unknown: '不明',
-};
+import type { Gecko } from '@/lib/api';
+import { SEX_LABEL } from '@/lib/gecko-display';
 
 export interface GeckoCardProps {
   gecko: Gecko;

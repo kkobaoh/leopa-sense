@@ -1,5 +1,9 @@
 import { render, waitFor } from '@testing-library/react-native';
 
+jest.mock('expo-router', () => ({
+  useRouter: () => ({ push: jest.fn(), back: jest.fn(), navigate: jest.fn() }),
+}));
+
 import GeckosScreen from '../../src/app/(tabs)/geckos';
 import { createTestWrapper } from '../support/query-wrapper';
 
