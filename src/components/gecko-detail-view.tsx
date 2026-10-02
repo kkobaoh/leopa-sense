@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import type { Gecko } from '@/lib/api';
 import { sexLabel } from '@/lib/gecko-display';
@@ -8,13 +8,21 @@ export interface GeckoDetailViewProps {
   isLoading: boolean;
   isError: boolean;
   gecko: Gecko | null | undefined;
+  onEdit?: () => void;
+  onDelete?: () => void;
 }
 
 /**
  * 個体詳細の見た目（props のみ）。読込中・エラー・not found・詳細の 4 状態を描画する。
  * 給餌履歴・体重グラフは餌やり/体重機能の実装後に追加する。
  */
-export function GeckoDetailView({ isLoading, isError, gecko }: GeckoDetailViewProps) {
+export function GeckoDetailView({
+  isLoading,
+  isError,
+  gecko,
+  onEdit,
+  onDelete,
+}: GeckoDetailViewProps) {
   if (isLoading) {
     return (
       <View testID="gecko-detail-loading" style={styles.center}>
@@ -59,6 +67,27 @@ export function GeckoDetailView({ isLoading, isError, gecko }: GeckoDetailViewPr
         />
       </View>
       {/* TODO(feedings/weight): 給餌履歴・体重グラフをここに追加 */}
+
+      {(onEdit || onDelete) && (
+        <View style={styles.actions}>
+          {onEdit ? (
+            <Pressable
+              accessibilityRole="button"
+              onPress={onEdit}
+              style={[styles.btn, styles.editBtn]}>
+              <Text style={styles.editText}>編集</Text>
+            </Pressable>
+          ) : null}
+          {onDelete ? (
+            <Pressable
+              accessibilityRole="button"
+              onPress={onDelete}
+              style={[styles.btn, styles.deleteBtn]}>
+              <Text style={styles.deleteText}>削除</Text>
+            </Pressable>
+          ) : null}
+        </View>
+      )}
     </ScrollView>
   );
 }
@@ -105,4 +134,10 @@ const styles = StyleSheet.create({
   },
   rowLabel: { color: '#8A8F98', fontSize: 14 },
   rowValue: { color: '#F5F5F5', fontSize: 14, fontWeight: '600' },
+  actions: { gap: 12, marginTop: 8 },
+  btn: { paddingVertical: 14, borderRadius: 10, alignItems: 'center' },
+  editBtn: { borderWidth: 1, borderColor: '#F0B65A' },
+  editText: { color: '#F0B65A', fontSize: 16, fontWeight: '700' },
+  deleteBtn: { borderWidth: 1, borderColor: '#F07070' },
+  deleteText: { color: '#F07070', fontSize: 16, fontWeight: '700' },
 });

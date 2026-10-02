@@ -1,9 +1,12 @@
-import { render, waitFor } from '@testing-library/react-native';
+import { fireEvent, render, waitFor } from '@testing-library/react-native';
+import { Alert, type AlertButton } from 'react-native';
 
-// expo-router の useLocalSearchParams をモック（id を差し替える）
+// expo-router の useLocalSearchParams / useRouter をモック
 let mockParams: { id?: string } = {};
+const mockBack = jest.fn();
 jest.mock('expo-router', () => ({
   useLocalSearchParams: () => mockParams,
+  useRouter: () => ({ back: mockBack, push: jest.fn(), navigate: jest.fn() }),
 }));
 
 import GeckoDetailScreen from '../../src/app/geckos/[id]';
@@ -28,5 +31,31 @@ describe('GeckoDetailScreen (route)', () => {
     const { getByText } = await render(<GeckoDetailScreen />, { wrapper });
 
     await waitFor(() => expect(getByText('個体が見つかりません')).toBeTruthy());
+  });
+
+  it('削除を確定すると個体を消して前の画面に戻る', async () => {
+    const { wrapper, geckos, ownerId } = createTestWrapper();
+    const g = await geckos.create(ownerId, { name: 'レオ' });
+    mockParams = { id: g.id };
+
+    // Alert の確認で「削除」(destructive) を自動で押す
+    const alertSpy = jest
+      .spyOn(Alert, 'alert')
+      .mockImplementation((_title, _message, buttons) => {
+        const del = (buttons as AlertButton[] | undefined)?.find(
+          (b) => b.style === 'destructive',
+        );
+        del?.onPress?.();
+      });
+
+    const { getByText } = await render(<GeckoDetailScreen />, { wrapper });
+    await waitFor(() => expect(getByText('レオ')).toBeTruthy());
+
+    fireEvent.press(getByText('削除'));
+
+    await waitFor(() => expect(mockBack).toHaveBeenCalledTimes(1));
+    expect(await geckos.getById(ownerId, g.id)).toBeNull();
+
+    alertSpy.mockRestore();
   });
 });

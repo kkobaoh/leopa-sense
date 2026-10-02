@@ -1,11 +1,42 @@
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { Alert } from 'react-native';
 
 import { GeckoDetailView } from '@/components/gecko-detail-view';
-import { useGecko } from '@/lib/hooks/use-geckos';
+import { useGecko, useRemoveGecko } from '@/lib/hooks/use-geckos';
 
 export default function GeckoDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const router = useRouter();
   const { data, isPending, isError } = useGecko(id ?? '');
+  const removeGecko = useRemoveGecko();
 
-  return <GeckoDetailView isLoading={isPending} isError={isError} gecko={data} />;
+  const geckoId = data?.id;
+
+  function confirmDelete(targetId: string) {
+    Alert.alert('削除しますか？', 'この個体を削除します。元に戻せません。', [
+      { text: 'キャンセル', style: 'cancel' },
+      {
+        text: '削除',
+        style: 'destructive',
+        onPress: async () => {
+          await removeGecko.mutateAsync(targetId);
+          router.back();
+        },
+      },
+    ]);
+  }
+
+  return (
+    <GeckoDetailView
+      isLoading={isPending}
+      isError={isError}
+      gecko={data}
+      onEdit={
+        geckoId
+          ? () => router.push({ pathname: '/geckos/edit/[id]', params: { id: geckoId } })
+          : undefined
+      }
+      onDelete={geckoId ? () => confirmDelete(geckoId) : undefined}
+    />
+  );
 }

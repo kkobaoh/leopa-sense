@@ -20,7 +20,13 @@ const gecko: Gecko = {
 const meta = {
   title: 'Gecko/GeckoDetailView',
   component: GeckoDetailView,
-  args: { isLoading: false, isError: false, gecko },
+  args: {
+    isLoading: false,
+    isError: false,
+    gecko,
+    onEdit: () => console.log('edit'),
+    onDelete: () => console.log('delete'),
+  },
 } satisfies Meta<typeof GeckoDetailView>;
 
 export default meta;

@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react-native';
+import { fireEvent, render } from '@testing-library/react-native';
 
 import { GeckoDetailView } from '@/components/gecko-detail-view';
 import { makeGecko } from '../support/factories';
@@ -41,5 +41,33 @@ describe('GeckoDetailView', () => {
     expect(getByText('オス')).toBeTruthy();
     expect(getByText('2024-06-01')).toBeTruthy();
     expect(getByText('7日')).toBeTruthy();
+  });
+
+  it('onEdit / onDelete を渡すとボタンが押せる', async () => {
+    const onEdit = jest.fn();
+    const onDelete = jest.fn();
+    const { getByText } = await render(
+      <GeckoDetailView
+        isLoading={false}
+        isError={false}
+        gecko={makeGecko({ name: 'レオ' })}
+        onEdit={onEdit}
+        onDelete={onDelete}
+      />,
+    );
+
+    fireEvent.press(getByText('編集'));
+    expect(onEdit).toHaveBeenCalledTimes(1);
+
+    fireEvent.press(getByText('削除'));
+    expect(onDelete).toHaveBeenCalledTimes(1);
+  });
+
+  it('onEdit / onDelete を渡さなければボタンを表示しない', async () => {
+    const { queryByText } = await render(
+      <GeckoDetailView isLoading={false} isError={false} gecko={makeGecko()} />,
+    );
+    expect(queryByText('編集')).toBeNull();
+    expect(queryByText('削除')).toBeNull();
   });
 });
