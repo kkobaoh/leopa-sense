@@ -1,4 +1,12 @@
-import { daysSince, feedingBadge } from '@/lib/feeding-display';
+import { daysSince, feedingBadge, formatFedAt } from '@/lib/feeding-display';
+
+describe('formatFedAt', () => {
+  it('ローカル時刻で「M/D HH:mm」形式にする', () => {
+    // ローカル時刻で組み立てるので実行環境のタイムゾーンに依存しない
+    const iso = new Date(2026, 0, 2, 9, 5).toISOString();
+    expect(formatFedAt(iso)).toBe('1/2 09:05');
+  });
+});
 
 const NOW = new Date('2026-01-10T00:00:00.000Z');
 

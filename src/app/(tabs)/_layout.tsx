@@ -23,6 +23,7 @@ export default function TabsLayout() {
           ),
         }}
       />
+      <Tabs.Screen name="logs" options={{ title: '記録' }} />
     </Tabs>
   );
 }

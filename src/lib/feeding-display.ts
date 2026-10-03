@@ -9,6 +9,13 @@ export const RESULT_LABEL: Record<FeedingResult, string> = {
   refused: '拒食',
 };
 
+/** 給餌日時をローカル時刻の「M/D HH:mm」で表示する。 */
+export function formatFedAt(iso: string): string {
+  const d = new Date(iso);
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${d.getMonth() + 1}/${d.getDate()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
 /** iso から now までの経過日数（切り捨て、未来なら 0）。 */
 export function daysSince(iso: string, now: Date = new Date()): number {
   const diff = now.getTime() - Date.parse(iso);
