@@ -31,6 +31,10 @@ export const feedingUpdateInputSchema = z.object({
 export type FeedingCreateInput = z.input<typeof feedingCreateInputSchema>;
 export type FeedingUpdateInput = z.input<typeof feedingUpdateInputSchema>;
 
+// フォーム用: geckoId は画面側で付与するためフォームには含めない。
+export const feedingFormSchema = feedingCreateInputSchema.omit({ geckoId: true });
+export type FeedingFormValues = z.input<typeof feedingFormSchema>;
+
 export interface Feeding {
   id: string;
   ownerId: string;

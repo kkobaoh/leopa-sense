@@ -24,6 +24,7 @@ const meta = {
     isLoading: false,
     isError: false,
     gecko,
+    onRecordFeeding: () => console.log('record feeding'),
     onEdit: () => console.log('edit'),
     onDelete: () => console.log('delete'),
   },

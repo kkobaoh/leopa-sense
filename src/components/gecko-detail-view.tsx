@@ -10,6 +10,7 @@ export interface GeckoDetailViewProps {
   gecko: Gecko | null | undefined;
   onEdit?: () => void;
   onDelete?: () => void;
+  onRecordFeeding?: () => void;
 }
 
 /**
@@ -22,6 +23,7 @@ export function GeckoDetailView({
   gecko,
   onEdit,
   onDelete,
+  onRecordFeeding,
 }: GeckoDetailViewProps) {
   if (isLoading) {
     return (
@@ -66,6 +68,15 @@ export function GeckoDetailView({
           value={gecko.feedingIntervalDays != null ? `${gecko.feedingIntervalDays}日` : '—'}
         />
       </View>
+      {onRecordFeeding ? (
+        <Pressable
+          accessibilityRole="button"
+          onPress={onRecordFeeding}
+          style={[styles.btn, styles.recordBtn]}>
+          <Text style={styles.recordText}>餌やりを記録</Text>
+        </Pressable>
+      ) : null}
+
       {/* TODO(feedings/weight): 給餌履歴・体重グラフをここに追加 */}
 
       {(onEdit || onDelete) && (
@@ -135,6 +146,8 @@ const styles = StyleSheet.create({
   rowLabel: { color: '#8A8F98', fontSize: 14 },
   rowValue: { color: '#F5F5F5', fontSize: 14, fontWeight: '600' },
   actions: { gap: 12, marginTop: 8 },
+  recordBtn: { backgroundColor: '#F0B65A' },
+  recordText: { color: '#14161A', fontSize: 16, fontWeight: '700' },
   btn: { paddingVertical: 14, borderRadius: 10, alignItems: 'center' },
   editBtn: { borderWidth: 1, borderColor: '#F0B65A' },
   editText: { color: '#F0B65A', fontSize: 16, fontWeight: '700' },

@@ -56,11 +56,26 @@ describe('GeckoDetailView', () => {
       />,
     );
 
-    fireEvent.press(getByText('編集'));
+    await fireEvent.press(getByText('編集'));
     expect(onEdit).toHaveBeenCalledTimes(1);
 
-    fireEvent.press(getByText('削除'));
+    await fireEvent.press(getByText('削除'));
     expect(onDelete).toHaveBeenCalledTimes(1);
+  });
+
+  it('onRecordFeeding を渡すと「餌やりを記録」ボタンが押せる', async () => {
+    const onRecordFeeding = jest.fn();
+    const { getByText } = await render(
+      <GeckoDetailView
+        isLoading={false}
+        isError={false}
+        gecko={makeGecko()}
+        onRecordFeeding={onRecordFeeding}
+      />,
+    );
+
+    await fireEvent.press(getByText('餌やりを記録'));
+    expect(onRecordFeeding).toHaveBeenCalledTimes(1);
   });
 
   it('onEdit / onDelete を渡さなければボタンを表示しない', async () => {

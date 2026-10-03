@@ -1,4 +1,13 @@
+import type { FeedingResult } from './api';
+
 const DAY_MS = 86_400_000;
+
+/** 食いつきの表示ラベル。 */
+export const RESULT_LABEL: Record<FeedingResult, string> = {
+  eaten: '完食',
+  left: '残し',
+  refused: '拒食',
+};
 
 /** iso から now までの経過日数（切り捨て、未来なら 0）。 */
 export function daysSince(iso: string, now: Date = new Date()): number {

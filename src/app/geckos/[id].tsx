@@ -31,6 +31,11 @@ export default function GeckoDetailScreen() {
       isLoading={isPending}
       isError={isError}
       gecko={data}
+      onRecordFeeding={
+        geckoId
+          ? () => router.push({ pathname: '/feedings/new', params: { geckoId } })
+          : undefined
+      }
       onEdit={
         geckoId
           ? () => router.push({ pathname: '/geckos/edit/[id]', params: { id: geckoId } })
