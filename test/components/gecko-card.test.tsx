@@ -24,7 +24,7 @@ describe('GeckoCard', () => {
     const { getByText } = await render(
       <GeckoCard gecko={makeGecko({ id: 'g1', name: 'ポチ' })} onPress={onPress} />,
     );
-    fireEvent.press(getByText('ポチ'));
+    await fireEvent.press(getByText('ポチ'));
     expect(onPress).toHaveBeenCalledWith('g1');
   });
 

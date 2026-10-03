@@ -1,37 +1,61 @@
 import { fireEvent, render, waitFor } from '@testing-library/react-native';
 
 import { GeckoForm } from '@/components/gecko-form';
-import { settle } from '../support/settle';
 
-// react-hook-form の submit は React 19 の react-native test-renderer を壊しやすく、
-// 特に「成功 submit（onSubmit 呼び出し）」は flush でも回収できず後続 render を壊す。
-// そのため成功 submit のテストは別ファイル（gecko-form.submit.test.tsx）に分離し、
-// このファイルでは描画とバリデーション（無効 submit）のみを検証する。
-// 無効 submit の末尾では settle() を呼んで保留更新を流す。
-describe('GeckoForm (描画・バリデーション)', () => {
+// 注意: RNTL v14 では render / fireEvent はすべて async。必ず await すること
+// （await しないと act スコープが重なり、後続テストのレンダラが壊れる）。
+describe('GeckoForm', () => {
   it('name が空のまま送信するとエラーを表示し onSubmit を呼ばない', async () => {
     const onSubmit = jest.fn();
     const { getByText } = await render(<GeckoForm onSubmit={onSubmit} />);
 
-    fireEvent.press(getByText('保存'));
+    await fireEvent.press(getByText('保存'));
 
     await waitFor(() => expect(getByText('名前は必須です')).toBeTruthy());
     expect(onSubmit).not.toHaveBeenCalled();
-    await settle();
   });
 
   it('給餌間隔が 0 以下だと送信をブロックする', async () => {
     const onSubmit = jest.fn();
     const { getByTestId, getByText } = await render(<GeckoForm onSubmit={onSubmit} />);
 
-    fireEvent.changeText(getByTestId('gecko-form-name'), 'レオ');
-    fireEvent.changeText(getByTestId('gecko-form-feedingIntervalDays'), '0');
-    fireEvent.press(getByText('保存'));
+    await fireEvent.changeText(getByTestId('gecko-form-name'), 'レオ');
+    await fireEvent.changeText(getByTestId('gecko-form-feedingIntervalDays'), '0');
+    await fireEvent.press(getByText('保存'));
 
     await waitFor(() =>
       expect(getByTestId('gecko-form-feedingIntervalDays-error')).toBeTruthy(),
     );
     expect(onSubmit).not.toHaveBeenCalled();
-    await settle();
+  });
+
+  it('有効入力で onSubmit が整形済みの値で呼ばれる', async () => {
+    const onSubmit = jest.fn();
+    const { getByTestId, getByText } = await render(<GeckoForm onSubmit={onSubmit} />);
+
+    await fireEvent.changeText(getByTestId('gecko-form-name'), '  レオ  ');
+    await fireEvent.changeText(getByTestId('gecko-form-morph'), 'ノーマル');
+    await fireEvent.changeText(getByTestId('gecko-form-feedingIntervalDays'), '7');
+    await fireEvent.press(getByText('保存'));
+
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    expect(onSubmit.mock.calls[0][0]).toMatchObject({
+      name: 'レオ',
+      morph: 'ノーマル',
+      sex: 'unknown',
+      feedingIntervalDays: 7,
+    });
+  });
+
+  it('性別チップを選ぶと onSubmit にその値が渡る', async () => {
+    const onSubmit = jest.fn();
+    const { getByTestId, getByText } = await render(<GeckoForm onSubmit={onSubmit} />);
+
+    await fireEvent.changeText(getByTestId('gecko-form-name'), 'ナナ');
+    await fireEvent.press(getByText('メス'));
+    await fireEvent.press(getByText('保存'));
+
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    expect(onSubmit.mock.calls[0][0]).toMatchObject({ name: 'ナナ', sex: 'female' });
   });
 });

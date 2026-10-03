@@ -9,15 +9,13 @@ jest.mock('expo-router', () => ({
 import NewGeckoScreen from '../../src/app/geckos/new';
 import { createTestWrapper } from '../support/query-wrapper';
 
-// 成功 submit を含むため、このファイルにはテストを 1 本だけ置く
-// （RHF の成功 handleSubmit が React 19 の test-renderer をテスト間で壊すため）。
 describe('NewGeckoScreen', () => {
   it('フォーム送信で個体を作成し、前の画面に戻る', async () => {
     const { wrapper, geckos, ownerId } = createTestWrapper();
     const { getByTestId, getByText } = await render(<NewGeckoScreen />, { wrapper });
 
-    fireEvent.changeText(getByTestId('gecko-form-name'), 'レオ');
-    fireEvent.press(getByText('登録'));
+    await fireEvent.changeText(getByTestId('gecko-form-name'), 'レオ');
+    await fireEvent.press(getByText('登録'));
 
     await waitFor(() => expect(mockBack).toHaveBeenCalledTimes(1));
 

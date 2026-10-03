@@ -51,7 +51,7 @@ describe('GeckoDetailScreen (route)', () => {
     const { getByText } = await render(<GeckoDetailScreen />, { wrapper });
     await waitFor(() => expect(getByText('レオ')).toBeTruthy());
 
-    fireEvent.press(getByText('削除'));
+    await fireEvent.press(getByText('削除'));
 
     await waitFor(() => expect(mockBack).toHaveBeenCalledTimes(1));
     expect(await geckos.getById(ownerId, g.id)).toBeNull();
