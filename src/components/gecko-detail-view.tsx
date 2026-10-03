@@ -1,8 +1,10 @@
 import type { ReactNode } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, Text, View } from 'react-native';
 
 import type { Gecko } from '@/lib/api';
 import { sexLabel } from '@/lib/gecko-display';
+import { makeThemedStyles } from '@/lib/theme';
+import { LoadingState, MessageState } from './ui/screen-state';
 
 export interface GeckoDetailViewProps {
   isLoading: boolean;
@@ -25,29 +27,11 @@ export function GeckoDetailView({
   onDelete,
   onRecordFeeding,
 }: GeckoDetailViewProps) {
-  if (isLoading) {
-    return (
-      <View testID="gecko-detail-loading" style={styles.center}>
-        <ActivityIndicator color="#F0B65A" />
-      </View>
-    );
-  }
+  const styles = useStyles();
 
-  if (isError) {
-    return (
-      <View style={styles.center}>
-        <Text style={styles.errorText}>読み込みに失敗しました</Text>
-      </View>
-    );
-  }
-
-  if (!gecko) {
-    return (
-      <View testID="gecko-detail-notfound" style={styles.center}>
-        <Text style={styles.title}>個体が見つかりません</Text>
-      </View>
-    );
-  }
+  if (isLoading) return <LoadingState testID="gecko-detail-loading" />;
+  if (isError) return <MessageState tone="error" title="読み込みに失敗しました" />;
+  if (!gecko) return <MessageState testID="gecko-detail-notfound" title="個体が見つかりません" />;
 
   const initial = gecko.name.slice(0, 1);
   return (
@@ -68,6 +52,7 @@ export function GeckoDetailView({
           value={gecko.feedingIntervalDays != null ? `${gecko.feedingIntervalDays}日` : '—'}
         />
       </View>
+
       {onRecordFeeding ? (
         <Pressable
           accessibilityRole="button"
@@ -104,6 +89,7 @@ export function GeckoDetailView({
 }
 
 function Row({ label, value }: { label: string; value: ReactNode }) {
+  const styles = useStyles();
   return (
     <View style={styles.row}>
       <Text style={styles.rowLabel}>{label}</Text>
@@ -112,45 +98,36 @@ function Row({ label, value }: { label: string; value: ReactNode }) {
   );
 }
 
-const styles = StyleSheet.create({
-  center: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 24,
-    backgroundColor: '#14161A',
-  },
-  errorText: { color: '#F07070', fontSize: 16, fontWeight: '700' },
-  title: { color: '#F5F5F5', fontSize: 16, fontWeight: '700' },
-  container: { flex: 1, backgroundColor: '#14161A' },
+const useStyles = makeThemedStyles((c) => ({
+  container: { flex: 1, backgroundColor: c.background },
   content: { padding: 16, gap: 16 },
   header: { alignItems: 'center', gap: 12, paddingVertical: 8 },
   avatar: {
     width: 72,
     height: 72,
     borderRadius: 36,
-    backgroundColor: '#4A3B2C',
+    backgroundColor: c.accentSurface,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  avatarText: { color: '#F0B65A', fontSize: 28, fontWeight: '700' },
-  name: { color: '#F5F5F5', fontSize: 20, fontWeight: '700' },
+  avatarText: { color: c.primary, fontSize: 28, fontWeight: '700' },
+  name: { color: c.text, fontSize: 20, fontWeight: '700' },
   rows: { gap: 1, borderRadius: 12, overflow: 'hidden' },
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
     paddingVertical: 14,
-    backgroundColor: '#1E2127',
+    backgroundColor: c.surface,
   },
-  rowLabel: { color: '#8A8F98', fontSize: 14 },
-  rowValue: { color: '#F5F5F5', fontSize: 14, fontWeight: '600' },
+  rowLabel: { color: c.textMuted, fontSize: 14 },
+  rowValue: { color: c.text, fontSize: 14, fontWeight: '600' },
   actions: { gap: 12, marginTop: 8 },
-  recordBtn: { backgroundColor: '#F0B65A' },
-  recordText: { color: '#14161A', fontSize: 16, fontWeight: '700' },
   btn: { paddingVertical: 14, borderRadius: 10, alignItems: 'center' },
-  editBtn: { borderWidth: 1, borderColor: '#F0B65A' },
-  editText: { color: '#F0B65A', fontSize: 16, fontWeight: '700' },
-  deleteBtn: { borderWidth: 1, borderColor: '#F07070' },
-  deleteText: { color: '#F07070', fontSize: 16, fontWeight: '700' },
-});
+  recordBtn: { backgroundColor: c.primary },
+  recordText: { color: c.onPrimary, fontSize: 16, fontWeight: '700' },
+  editBtn: { borderWidth: 1, borderColor: c.primary },
+  editText: { color: c.primary, fontSize: 16, fontWeight: '700' },
+  deleteBtn: { borderWidth: 1, borderColor: c.danger },
+  deleteText: { color: c.danger, fontSize: 16, fontWeight: '700' },
+}));

@@ -1,7 +1,8 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { ActivityIndicator, ScrollView, StyleSheet, View } from 'react-native';
 
 import { FeedingForm } from '@/components/feeding-form';
+import { LoadingState } from '@/components/ui/screen-state';
+import { ScreenScroll } from '@/components/ui/screen-scroll';
 import { useCreateFeeding, useLatestFeeding } from '@/lib/hooks/use-feedings';
 
 export default function NewFeedingScreen() {
@@ -11,17 +12,11 @@ export default function NewFeedingScreen() {
   const latest = useLatestFeeding(geckoId ?? '');
 
   // 前回の内容を初期値にするため、最新記録のロードを待ってからフォームを出す
-  if (latest.isPending) {
-    return (
-      <View style={styles.center}>
-        <ActivityIndicator color="#F0B65A" />
-      </View>
-    );
-  }
+  if (latest.isPending) return <LoadingState />;
 
   const last = latest.data;
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+    <ScreenScroll>
       <FeedingForm
         defaultValues={
           last
@@ -38,12 +33,6 @@ export default function NewFeedingScreen() {
           router.back();
         }}
       />
-    </ScrollView>
+    </ScreenScroll>
   );
 }
-
-const styles = StyleSheet.create({
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#14161A' },
-  container: { flex: 1, backgroundColor: '#14161A' },
-  content: { paddingBottom: 24 },
-});

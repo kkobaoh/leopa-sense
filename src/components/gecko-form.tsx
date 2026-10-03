@@ -1,9 +1,15 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import type { ReactNode } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { geckoCreateInputSchema, type GeckoCreateInput, type GeckoSex } from '@/lib/api';
+import {
+  Chip,
+  ChipGroup,
+  FormContainer,
+  FormField,
+  FormTextInput,
+  SubmitButton,
+} from './ui/form';
 
 const SEX_OPTIONS: { value: GeckoSex; label: string }[] = [
   { value: 'male', label: 'オス' },
@@ -35,15 +41,18 @@ export function GeckoForm({ defaultValues, onSubmit, submitLabel = '保存' }: G
   });
 
   return (
-    <View style={styles.form}>
-      <Field label="名前" required error={errors.name?.message} errorTestID="gecko-form-name-error">
+    <FormContainer>
+      <FormField
+        label="名前"
+        required
+        error={errors.name?.message}
+        errorTestID="gecko-form-name-error">
         <Controller
           control={control}
           name="name"
           render={({ field }) => (
-            <TextInput
+            <FormTextInput
               testID="gecko-form-name"
-              style={styles.input}
               placeholder="レオ"
               value={field.value ?? ''}
               onChangeText={field.onChange}
@@ -51,16 +60,15 @@ export function GeckoForm({ defaultValues, onSubmit, submitLabel = '保存' }: G
             />
           )}
         />
-      </Field>
+      </FormField>
 
-      <Field label="モルフ" error={errors.morph?.message} errorTestID="gecko-form-morph-error">
+      <FormField label="モルフ" error={errors.morph?.message} errorTestID="gecko-form-morph-error">
         <Controller
           control={control}
           name="morph"
           render={({ field }) => (
-            <TextInput
+            <FormTextInput
               testID="gecko-form-morph"
-              style={styles.input}
               placeholder="ハイイエロー"
               value={field.value ?? ''}
               onChangeText={(t) => field.onChange(t === '' ? null : t)}
@@ -68,33 +76,28 @@ export function GeckoForm({ defaultValues, onSubmit, submitLabel = '保存' }: G
             />
           )}
         />
-      </Field>
+      </FormField>
 
-      <Field label="性別">
+      <FormField label="性別">
         <Controller
           control={control}
           name="sex"
           render={({ field }) => (
-            <View style={styles.chips}>
-              {SEX_OPTIONS.map((opt) => {
-                const selected = field.value === opt.value;
-                return (
-                  <Pressable
-                    key={opt.value}
-                    onPress={() => field.onChange(opt.value)}
-                    style={[styles.chip, selected && styles.chipSelected]}>
-                    <Text style={[styles.chipText, selected && styles.chipTextSelected]}>
-                      {opt.label}
-                    </Text>
-                  </Pressable>
-                );
-              })}
-            </View>
+            <ChipGroup>
+              {SEX_OPTIONS.map((opt) => (
+                <Chip
+                  key={opt.value}
+                  label={opt.label}
+                  selected={field.value === opt.value}
+                  onPress={() => field.onChange(opt.value)}
+                />
+              ))}
+            </ChipGroup>
           )}
         />
-      </Field>
+      </FormField>
 
-      <Field
+      <FormField
         label="生年月日 (YYYY-MM-DD)"
         error={errors.hatchedOn?.message}
         errorTestID="gecko-form-hatchedOn-error">
@@ -102,9 +105,8 @@ export function GeckoForm({ defaultValues, onSubmit, submitLabel = '保存' }: G
           control={control}
           name="hatchedOn"
           render={({ field }) => (
-            <TextInput
+            <FormTextInput
               testID="gecko-form-hatchedOn"
-              style={styles.input}
               placeholder="2024-06-01"
               autoCapitalize="none"
               value={field.value ?? ''}
@@ -113,9 +115,9 @@ export function GeckoForm({ defaultValues, onSubmit, submitLabel = '保存' }: G
             />
           )}
         />
-      </Field>
+      </FormField>
 
-      <Field
+      <FormField
         label="給餌間隔 (日)"
         error={errors.feedingIntervalDays?.message}
         errorTestID="gecko-form-feedingIntervalDays-error">
@@ -123,9 +125,8 @@ export function GeckoForm({ defaultValues, onSubmit, submitLabel = '保存' }: G
           control={control}
           name="feedingIntervalDays"
           render={({ field }) => (
-            <TextInput
+            <FormTextInput
               testID="gecko-form-feedingIntervalDays"
-              style={styles.input}
               placeholder="7"
               keyboardType="number-pad"
               value={field.value == null ? '' : String(field.value)}
@@ -134,78 +135,13 @@ export function GeckoForm({ defaultValues, onSubmit, submitLabel = '保存' }: G
             />
           )}
         />
-      </Field>
+      </FormField>
 
-      <Pressable
+      <SubmitButton
         testID="gecko-form-submit"
-        accessibilityRole="button"
+        label={submitLabel}
         onPress={handleSubmit((values) => onSubmit(values))}
-        style={styles.submit}>
-        <Text style={styles.submitText}>{submitLabel}</Text>
-      </Pressable>
-    </View>
+      />
+    </FormContainer>
   );
 }
-
-function Field({
-  label,
-  required,
-  error,
-  errorTestID,
-  children,
-}: {
-  label: string;
-  required?: boolean;
-  error?: string;
-  errorTestID?: string;
-  children: ReactNode;
-}) {
-  return (
-    <View style={styles.field}>
-      <Text style={styles.label}>
-        {label}
-        {required ? ' *' : ''}
-      </Text>
-      {children}
-      {error ? (
-        <Text testID={errorTestID} style={styles.error}>
-          {error}
-        </Text>
-      ) : null}
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  form: { gap: 16, padding: 16 },
-  field: { gap: 6 },
-  label: { fontSize: 13, fontWeight: '600', color: '#4A3B2C' },
-  input: {
-    borderWidth: 1,
-    borderColor: '#CBB89D',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    fontSize: 16,
-  },
-  error: { color: '#D64545', fontSize: 12 },
-  chips: { flexDirection: 'row', gap: 8 },
-  chip: {
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 999,
-    borderWidth: 1,
-    borderColor: '#CBB89D',
-  },
-  chipSelected: { backgroundColor: '#E8A33D', borderColor: '#E8A33D' },
-  chipText: { color: '#4A3B2C', fontWeight: '600' },
-  chipTextSelected: { color: '#FFFFFF' },
-  submit: {
-    marginTop: 8,
-    backgroundColor: '#E8A33D',
-    borderRadius: 10,
-    paddingVertical: 14,
-    alignItems: 'center',
-  },
-  submitText: { color: '#FFFFFF', fontSize: 16, fontWeight: '700' },
-});

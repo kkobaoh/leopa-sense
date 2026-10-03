@@ -1,7 +1,9 @@
-import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native';
+import { FlatList, View } from 'react-native';
 
 import type { Gecko } from '@/lib/api';
+import { makeThemedStyles } from '@/lib/theme';
 import { GeckoCard } from './gecko-card';
+import { LoadingState, MessageState } from './ui/screen-state';
 
 export interface GeckoListViewProps {
   isLoading: boolean;
@@ -23,29 +25,28 @@ export function GeckoListView({
   onSelectGecko,
   lastFedAtOf,
 }: GeckoListViewProps) {
-  if (isLoading) {
-    return (
-      <View testID="gecko-list-loading" style={styles.center}>
-        <ActivityIndicator color="#F0B65A" />
-      </View>
-    );
-  }
+  const styles = useStyles();
+
+  if (isLoading) return <LoadingState testID="gecko-list-loading" />;
 
   if (isError) {
     return (
-      <View testID="gecko-list-error" style={styles.center}>
-        <Text style={styles.errorText}>読み込みに失敗しました</Text>
-        <Text style={styles.hint}>通信環境を確認してもう一度お試しください</Text>
-      </View>
+      <MessageState
+        testID="gecko-list-error"
+        tone="error"
+        title="読み込みに失敗しました"
+        hint="通信環境を確認してもう一度お試しください"
+      />
     );
   }
 
   if (geckos.length === 0) {
     return (
-      <View testID="gecko-list-empty" style={styles.center}>
-        <Text style={styles.emptyTitle}>個体がいません</Text>
-        <Text style={styles.hint}>個体を登録するとここに表示されます</Text>
-      </View>
+      <MessageState
+        testID="gecko-list-empty"
+        title="個体がいません"
+        hint="個体を登録するとここに表示されます"
+      />
     );
   }
 
@@ -63,19 +64,8 @@ export function GeckoListView({
   );
 }
 
-const styles = StyleSheet.create({
-  center: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    padding: 24,
-    backgroundColor: '#14161A',
-  },
-  errorText: { color: '#F07070', fontSize: 16, fontWeight: '700' },
-  emptyTitle: { color: '#F5F5F5', fontSize: 16, fontWeight: '700' },
-  hint: { color: '#8A8F98', fontSize: 13, textAlign: 'center' },
-  list: { flex: 1, backgroundColor: '#14161A' },
+const useStyles = makeThemedStyles((c) => ({
+  list: { flex: 1, backgroundColor: c.background },
   listContent: { padding: 16 },
   separator: { height: 12 },
-});
+}));

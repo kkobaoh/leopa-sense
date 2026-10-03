@@ -1,7 +1,7 @@
 import { useRouter } from 'expo-router';
-import { ScrollView, StyleSheet } from 'react-native';
 
 import { GeckoForm } from '@/components/gecko-form';
+import { ScreenScroll } from '@/components/ui/screen-scroll';
 import { useCreateGecko } from '@/lib/hooks/use-geckos';
 
 export default function NewGeckoScreen() {
@@ -9,7 +9,7 @@ export default function NewGeckoScreen() {
   const createGecko = useCreateGecko();
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+    <ScreenScroll>
       <GeckoForm
         submitLabel="登録"
         onSubmit={async (values) => {
@@ -17,11 +17,6 @@ export default function NewGeckoScreen() {
           router.back();
         }}
       />
-    </ScrollView>
+    </ScreenScroll>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#14161A' },
-  content: { paddingBottom: 24 },
-});

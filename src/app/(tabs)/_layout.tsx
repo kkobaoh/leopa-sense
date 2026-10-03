@@ -1,15 +1,17 @@
 import { Link, Tabs } from 'expo-router';
-import { StyleSheet } from 'react-native';
+
+import { makeThemedStyles, useTheme } from '@/lib/theme';
 
 export default function TabsLayout() {
+  const c = useTheme();
+  const styles = useStyles();
+
+  // 背景・ヘッダー・タブバーの色はルートのナビゲーションテーマ（navigationTheme）から適用される
   return (
     <Tabs
       screenOptions={{
-        headerStyle: { backgroundColor: '#14161A' },
-        headerTintColor: '#F5F5F5',
-        tabBarStyle: { backgroundColor: '#1E2127', borderTopColor: '#2A2E35' },
-        tabBarActiveTintColor: '#F0B65A',
-        tabBarInactiveTintColor: '#8A8F98',
+        tabBarActiveTintColor: c.primary,
+        tabBarInactiveTintColor: c.textMuted,
       }}>
       <Tabs.Screen name="index" options={{ title: 'ホーム' }} />
       <Tabs.Screen
@@ -28,11 +30,11 @@ export default function TabsLayout() {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeThemedStyles((c) => ({
   addButton: {
-    color: '#F0B65A',
+    color: c.primary,
     fontSize: 16,
     fontWeight: '700',
     paddingHorizontal: 16,
   },
-});
+}));

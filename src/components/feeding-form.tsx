@@ -1,10 +1,18 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import type { ReactNode } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { Pressable, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
+import { Pressable, Switch, Text, View } from 'react-native';
 
 import { feedingFormSchema, type FeedingFormValues, type FeedingResult } from '@/lib/api';
 import { RESULT_LABEL } from '@/lib/feeding-display';
+import { makeThemedStyles, useTheme } from '@/lib/theme';
+import {
+  Chip,
+  ChipGroup,
+  FormContainer,
+  FormField,
+  FormTextInput,
+  SubmitButton,
+} from './ui/form';
 
 const RESULT_OPTIONS: FeedingResult[] = ['eaten', 'left', 'refused'];
 const FOOD_PRESETS = ['コオロギ', 'デュビア', 'ミルワーム', '人工フード'];
@@ -22,6 +30,8 @@ export interface FeedingFormProps {
  * 記録日時は送信時刻（リポジトリ側で現在時刻を入れる）。
  */
 export function FeedingForm({ defaultValues, onSubmit, submitLabel = '記録する' }: FeedingFormProps) {
+  const styles = useStyles();
+  const c = useTheme();
   const {
     control,
     handleSubmit,
@@ -39,42 +49,36 @@ export function FeedingForm({ defaultValues, onSubmit, submitLabel = '記録す�
   });
 
   return (
-    <View style={styles.form}>
-      <Field label="餌の種類" required error={errors.foodType?.message}>
+    <FormContainer>
+      <FormField label="餌の種類" required error={errors.foodType?.message}>
         <Controller
           control={control}
           name="foodType"
           render={({ field }) => (
             <View style={styles.fieldBody}>
-              <TextInput
+              <FormTextInput
                 testID="feeding-form-foodType"
-                style={styles.input}
                 placeholder="コオロギ"
                 value={field.value ?? ''}
                 onChangeText={field.onChange}
                 onBlur={field.onBlur}
               />
-              <View style={styles.chips}>
-                {FOOD_PRESETS.map((food) => {
-                  const selected = field.value === food;
-                  return (
-                    <Pressable
-                      key={food}
-                      onPress={() => field.onChange(food)}
-                      style={[styles.chip, selected && styles.chipSelected]}>
-                      <Text style={[styles.chipText, selected && styles.chipTextSelected]}>
-                        {food}
-                      </Text>
-                    </Pressable>
-                  );
-                })}
-              </View>
+              <ChipGroup>
+                {FOOD_PRESETS.map((food) => (
+                  <Chip
+                    key={food}
+                    label={food}
+                    selected={field.value === food}
+                    onPress={() => field.onChange(food)}
+                  />
+                ))}
+              </ChipGroup>
             </View>
           )}
         />
-      </Field>
+      </FormField>
 
-      <Field label="数">
+      <FormField label="数">
         <Controller
           control={control}
           name="quantity"
@@ -103,33 +107,28 @@ export function FeedingForm({ defaultValues, onSubmit, submitLabel = '記録す�
             );
           }}
         />
-      </Field>
+      </FormField>
 
-      <Field label="食いつき">
+      <FormField label="食いつき">
         <Controller
           control={control}
           name="result"
           render={({ field }) => (
-            <View style={styles.chips}>
-              {RESULT_OPTIONS.map((result) => {
-                const selected = field.value === result;
-                return (
-                  <Pressable
-                    key={result}
-                    onPress={() => field.onChange(result)}
-                    style={[styles.chip, selected && styles.chipSelected]}>
-                    <Text style={[styles.chipText, selected && styles.chipTextSelected]}>
-                      {RESULT_LABEL[result]}
-                    </Text>
-                  </Pressable>
-                );
-              })}
-            </View>
+            <ChipGroup>
+              {RESULT_OPTIONS.map((result) => (
+                <Chip
+                  key={result}
+                  label={RESULT_LABEL[result]}
+                  selected={field.value === result}
+                  onPress={() => field.onChange(result)}
+                />
+              ))}
+            </ChipGroup>
           )}
         />
-      </Field>
+      </FormField>
 
-      <Field label="サプリ">
+      <FormField label="サプリ">
         <Controller
           control={control}
           name="supplement"
@@ -138,19 +137,19 @@ export function FeedingForm({ defaultValues, onSubmit, submitLabel = '記録す�
               testID="feeding-form-supplement"
               value={field.value ?? false}
               onValueChange={field.onChange}
+              trackColor={{ true: c.primary, false: c.surfaceAlt }}
             />
           )}
         />
-      </Field>
+      </FormField>
 
-      <Field label="メモ">
+      <FormField label="メモ">
         <Controller
           control={control}
           name="note"
           render={({ field }) => (
-            <TextInput
+            <FormTextInput
               testID="feeding-form-note"
-              style={styles.input}
               placeholder="任意"
               value={field.value ?? ''}
               onChangeText={(t) => field.onChange(t === '' ? null : t)}
@@ -158,87 +157,35 @@ export function FeedingForm({ defaultValues, onSubmit, submitLabel = '記録す�
             />
           )}
         />
-      </Field>
+      </FormField>
 
-      <Pressable
+      <SubmitButton
         testID="feeding-form-submit"
-        accessibilityRole="button"
+        label={submitLabel}
         onPress={handleSubmit((values) => onSubmit(values))}
-        style={styles.submit}>
-        <Text style={styles.submitText}>{submitLabel}</Text>
-      </Pressable>
-    </View>
+      />
+    </FormContainer>
   );
 }
 
-function Field({
-  label,
-  required,
-  error,
-  children,
-}: {
-  label: string;
-  required?: boolean;
-  error?: string;
-  children: ReactNode;
-}) {
-  return (
-    <View style={styles.field}>
-      <Text style={styles.label}>
-        {label}
-        {required ? ' *' : ''}
-      </Text>
-      {children}
-      {error ? <Text style={styles.error}>{error}</Text> : null}
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  form: { gap: 16, padding: 16 },
-  field: { gap: 6 },
+const useStyles = makeThemedStyles((c) => ({
   fieldBody: { gap: 8 },
-  label: { fontSize: 13, fontWeight: '600', color: '#CBB89D' },
-  input: {
-    borderWidth: 1,
-    borderColor: '#2A2E35',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    fontSize: 16,
-    color: '#F5F5F5',
-    backgroundColor: '#1E2127',
-  },
-  error: { color: '#F07070', fontSize: 12 },
-  chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  chip: {
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 999,
-    borderWidth: 1,
-    borderColor: '#2A2E35',
-  },
-  chipSelected: { backgroundColor: '#F0B65A', borderColor: '#F0B65A' },
-  chipText: { color: '#CBB89D', fontWeight: '600' },
-  chipTextSelected: { color: '#14161A' },
   stepper: { flexDirection: 'row', alignItems: 'center', gap: 16 },
   stepButton: {
     width: 44,
     height: 44,
     borderRadius: 22,
     borderWidth: 1,
-    borderColor: '#2A2E35',
+    borderColor: c.border,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  stepButtonText: { color: '#F0B65A', fontSize: 22, fontWeight: '700' },
-  stepValue: { color: '#F5F5F5', fontSize: 22, fontWeight: '700', minWidth: 32, textAlign: 'center' },
-  submit: {
-    marginTop: 8,
-    backgroundColor: '#F0B65A',
-    borderRadius: 10,
-    paddingVertical: 14,
-    alignItems: 'center',
+  stepButtonText: { color: c.primary, fontSize: 22, fontWeight: '700' },
+  stepValue: {
+    color: c.text,
+    fontSize: 22,
+    fontWeight: '700',
+    minWidth: 32,
+    textAlign: 'center',
   },
-  submitText: { color: '#14161A', fontSize: 16, fontWeight: '700' },
-});
+}));
