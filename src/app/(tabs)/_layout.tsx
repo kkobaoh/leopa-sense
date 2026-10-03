@@ -1,5 +1,5 @@
 import { Link, Tabs } from 'expo-router';
-import { StyleSheet, Text } from 'react-native';
+import { StyleSheet } from 'react-native';
 
 export default function TabsLayout() {
   return (
