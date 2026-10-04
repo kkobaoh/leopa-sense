@@ -10,11 +10,11 @@ export default function PetsScreen() {
   const { data, isPending, isError } = usePets();
   const { data: feedings } = useFeedings();
 
-  // 全餌やり（fedAt 降順）から個体ごとの「最新の給餌日時」を引く。
+  // 全餌やり（occurredAt 降順）から個体ごとの「最新の給餌日時」を引く。
   const latestByPet = useMemo(() => {
     const map = new Map<string, string>();
     for (const f of feedings ?? []) {
-      if (!map.has(f.petId)) map.set(f.petId, f.fedAt);
+      if (!map.has(f.petId)) map.set(f.petId, f.occurredAt);
     }
     return map;
   }, [feedings]);

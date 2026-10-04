@@ -7,7 +7,7 @@ function makeFeeding(overrides: Partial<Feeding>): Feeding {
     id: 'fd',
     ownerId: 'owner',
     petId: 'g1',
-    fedAt: '2026-01-01T00:00:00.000Z',
+    occurredAt: '2026-01-01T00:00:00.000Z',
     foodType: 'コオロギ',
     quantity: 1,
     result: 'eaten',
@@ -23,9 +23,9 @@ describe('buildFeedingLog', () => {
   it('個体名を解決し、新しい順に並べる', () => {
     const pets = [makePet({ id: 'g1', name: 'レオ' }), makePet({ id: 'g2', name: 'ナナ' })];
     const feedings = [
-      makeFeeding({ id: 'a', petId: 'g1', fedAt: '2026-01-01T00:00:00.000Z' }),
-      makeFeeding({ id: 'b', petId: 'g2', fedAt: '2026-01-03T00:00:00.000Z' }),
-      makeFeeding({ id: 'c', petId: 'g1', fedAt: '2026-01-02T00:00:00.000Z' }),
+      makeFeeding({ id: 'a', petId: 'g1', occurredAt: '2026-01-01T00:00:00.000Z' }),
+      makeFeeding({ id: 'b', petId: 'g2', occurredAt: '2026-01-03T00:00:00.000Z' }),
+      makeFeeding({ id: 'c', petId: 'g1', occurredAt: '2026-01-02T00:00:00.000Z' }),
     ];
 
     const log = buildFeedingLog(feedings, pets);

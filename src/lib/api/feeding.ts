@@ -5,10 +5,10 @@ import { z } from 'zod';
 export const feedingResultSchema = z.enum(['eaten', 'left', 'refused']);
 export type FeedingResult = z.infer<typeof feedingResultSchema>; // 完食 / 残し / 拒食
 
-/** 餌やり作成時の入力。petId と foodType は必須。fedAt 省略時はリポジトリが現在時刻を入れる。 */
+/** 餌やり作成時の入力。petId と foodType は必須。occurredAt 省略時はリポジトリが現在時刻を入れる。 */
 export const feedingCreateInputSchema = z.object({
   petId: z.string().min(1),
-  fedAt: z.string().min(1).optional(),
+  occurredAt: z.string().min(1).optional(),
   foodType: z.string().trim().min(1, '餌の種類は必須です'),
   quantity: z.number().int().positive().default(1),
   result: feedingResultSchema.default('eaten'),
@@ -20,7 +20,7 @@ export const feedingCreateInputSchema = z.object({
 // （zod の .partial() は default を保持してしまい、未指定項目が既定値で上書きされるため）。
 export const feedingUpdateInputSchema = z.object({
   petId: z.string().min(1).optional(),
-  fedAt: z.string().min(1).optional(),
+  occurredAt: z.string().min(1).optional(),
   foodType: z.string().trim().min(1).optional(),
   quantity: z.number().int().positive().optional(),
   result: feedingResultSchema.optional(),
@@ -39,7 +39,7 @@ export interface Feeding {
   id: string;
   ownerId: string;
   petId: string;
-  fedAt: string;
+  occurredAt: string;
   foodType: string;
   quantity: number;
   result: FeedingResult;
@@ -62,7 +62,7 @@ export class FeedingNotFoundError extends Error {
  */
 export interface FeedingRepository {
   list(ownerId: string): Promise<Feeding[]>;
-  /** 指定個体の記録を fedAt 降順（新しい順）で返す。 */
+  /** 指定個体の記録を occurredAt 降順（新しい順）で返す。 */
   listByPet(ownerId: string, petId: string): Promise<Feeding[]>;
   /** 指定個体の最新の記録。なければ null。 */
   latestForPet(ownerId: string, petId: string): Promise<Feeding | null>;

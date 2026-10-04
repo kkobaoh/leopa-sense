@@ -17,7 +17,7 @@ describe('NewFeedingScreen', () => {
       petId: 'g1',
       foodType: 'デュビア',
       quantity: 2,
-      fedAt: '2026-01-01T00:00:00.000Z',
+      occurredAt: '2026-01-01T00:00:00.000Z',
     });
     mockParams = { petId: 'g1' };
 

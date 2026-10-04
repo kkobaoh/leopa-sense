@@ -14,12 +14,12 @@ describe('useFeedings', () => {
     await feedings.create(ownerId, {
       petId: 'g1',
       foodType: 'A',
-      fedAt: '2026-01-01T00:00:00.000Z',
+      occurredAt: '2026-01-01T00:00:00.000Z',
     });
     await feedings.create(ownerId, {
       petId: 'g2',
       foodType: 'B',
-      fedAt: '2026-01-02T00:00:00.000Z',
+      occurredAt: '2026-01-02T00:00:00.000Z',
     });
 
     const { result } = await renderHook(() => useFeedings(), { wrapper });
@@ -35,12 +35,12 @@ describe('useFeedingsByPet', () => {
     await feedings.create(ownerId, {
       petId: 'g1',
       foodType: 'A',
-      fedAt: '2026-01-01T00:00:00.000Z',
+      occurredAt: '2026-01-01T00:00:00.000Z',
     });
     await feedings.create(ownerId, {
       petId: 'g1',
       foodType: 'B',
-      fedAt: '2026-01-03T00:00:00.000Z',
+      occurredAt: '2026-01-03T00:00:00.000Z',
     });
 
     const { result } = await renderHook(() => useFeedingsByPet('g1'), { wrapper });
@@ -56,12 +56,12 @@ describe('useLatestFeeding', () => {
     await feedings.create(ownerId, {
       petId: 'g1',
       foodType: 'A',
-      fedAt: '2026-01-01T00:00:00.000Z',
+      occurredAt: '2026-01-01T00:00:00.000Z',
     });
     await feedings.create(ownerId, {
       petId: 'g1',
       foodType: 'latest',
-      fedAt: '2026-01-05T00:00:00.000Z',
+      occurredAt: '2026-01-05T00:00:00.000Z',
     });
 
     const { result } = await renderHook(() => useLatestFeeding('g1'), { wrapper });

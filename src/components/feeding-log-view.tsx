@@ -61,7 +61,7 @@ export function FeedingLogView({ isLoading, isError, entries, onSelectPet }: Fee
             <Text style={[styles.result, { color: c[RESULT_TONE[item.result]] }]}>
               {RESULT_LABEL[item.result]}
             </Text>
-            <Text style={styles.time}>{formatFedAt(item.fedAt)}</Text>
+            <Text style={styles.time}>{formatFedAt(item.occurredAt)}</Text>
           </View>
         </Pressable>
       )}

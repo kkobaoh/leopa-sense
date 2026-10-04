@@ -30,7 +30,7 @@ export class InMemoryFeedingRepository implements FeedingRepository {
   async list(ownerId: string): Promise<Feeding[]> {
     return [...this.store.values()]
       .filter((f) => f.ownerId === ownerId)
-      .sort((a, b) => b.fedAt.localeCompare(a.fedAt));
+      .sort((a, b) => b.occurredAt.localeCompare(a.occurredAt));
   }
 
   async listByPet(ownerId: string, petId: string): Promise<Feeding[]> {
@@ -54,7 +54,7 @@ export class InMemoryFeedingRepository implements FeedingRepository {
       id: this.idFactory(),
       ownerId,
       petId: parsed.petId,
-      fedAt: parsed.fedAt ?? ts,
+      occurredAt: parsed.occurredAt ?? ts,
       foodType: parsed.foodType,
       quantity: parsed.quantity,
       result: parsed.result,
@@ -74,7 +74,7 @@ export class InMemoryFeedingRepository implements FeedingRepository {
     const patch = feedingUpdateInputSchema.parse(input);
     const next: Feeding = { ...existing };
     if (patch.petId !== undefined) next.petId = patch.petId;
-    if (patch.fedAt !== undefined) next.fedAt = patch.fedAt ?? existing.fedAt;
+    if (patch.occurredAt !== undefined) next.occurredAt = patch.occurredAt ?? existing.occurredAt;
     if (patch.foodType !== undefined) next.foodType = patch.foodType;
     if (patch.quantity !== undefined) next.quantity = patch.quantity;
     if (patch.result !== undefined) next.result = patch.result;

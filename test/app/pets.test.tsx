@@ -33,7 +33,7 @@ describe('PetsScreen (route)', () => {
     await feedings.create(ownerId, {
       petId: g.id,
       foodType: 'コオロギ',
-      fedAt: new Date(Date.now() - 2 * 86_400_000).toISOString(),
+      occurredAt: new Date(Date.now() - 2 * 86_400_000).toISOString(),
     });
 
     const { getByText } = await render(<PetsScreen />, { wrapper });

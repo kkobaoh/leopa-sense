@@ -31,17 +31,17 @@ describe('InMemoryFeedingRepository', () => {
       expect(f.result).toBe('eaten'); // 既定
       expect(f.supplement).toBe(false); // 既定
       expect(f.note).toBeNull();
-      expect(f.fedAt).toBe('2026-01-01T00:00:00.000Z'); // 省略時は now()
+      expect(f.occurredAt).toBe('2026-01-01T00:00:00.000Z'); // 省略時は now()
     });
 
-    it('fedAt を指定できる', async () => {
+    it('occurredAt を指定できる', async () => {
       const repo = makeRepo();
       const f = await repo.create(OWNER, {
         petId: 'g1',
         foodType: 'コオロギ',
-        fedAt: '2025-12-24T10:00:00.000Z',
+        occurredAt: '2025-12-24T10:00:00.000Z',
       });
-      expect(f.fedAt).toBe('2025-12-24T10:00:00.000Z');
+      expect(f.occurredAt).toBe('2025-12-24T10:00:00.000Z');
     });
 
     it('foodType が空ならバリデーションエラー', async () => {
@@ -58,11 +58,11 @@ describe('InMemoryFeedingRepository', () => {
   });
 
   describe('listByPet', () => {
-    it('指定個体の記録だけを fedAt 降順で返す', async () => {
+    it('指定個体の記録だけを occurredAt 降順で返す', async () => {
       const repo = makeRepo();
-      await repo.create(OWNER, { petId: 'g1', foodType: 'A', fedAt: '2026-01-01T00:00:00.000Z' });
-      await repo.create(OWNER, { petId: 'g2', foodType: 'B', fedAt: '2026-01-02T00:00:00.000Z' });
-      await repo.create(OWNER, { petId: 'g1', foodType: 'C', fedAt: '2026-01-03T00:00:00.000Z' });
+      await repo.create(OWNER, { petId: 'g1', foodType: 'A', occurredAt: '2026-01-01T00:00:00.000Z' });
+      await repo.create(OWNER, { petId: 'g2', foodType: 'B', occurredAt: '2026-01-02T00:00:00.000Z' });
+      await repo.create(OWNER, { petId: 'g1', foodType: 'C', occurredAt: '2026-01-03T00:00:00.000Z' });
 
       const list = await repo.listByPet(OWNER, 'g1');
       expect(list.map((f) => f.foodType)).toEqual(['C', 'A']); // 新しい順
@@ -80,8 +80,8 @@ describe('InMemoryFeedingRepository', () => {
   describe('latestForPet', () => {
     it('最新の記録を返す', async () => {
       const repo = makeRepo();
-      await repo.create(OWNER, { petId: 'g1', foodType: 'A', fedAt: '2026-01-01T00:00:00.000Z' });
-      await repo.create(OWNER, { petId: 'g1', foodType: 'C', fedAt: '2026-01-05T00:00:00.000Z' });
+      await repo.create(OWNER, { petId: 'g1', foodType: 'A', occurredAt: '2026-01-01T00:00:00.000Z' });
+      await repo.create(OWNER, { petId: 'g1', foodType: 'C', occurredAt: '2026-01-05T00:00:00.000Z' });
 
       const latest = await repo.latestForPet(OWNER, 'g1');
       expect(latest?.foodType).toBe('C');

@@ -16,12 +16,12 @@ describe('LogsScreen (route)', () => {
     await feedings.create(ownerId, {
       petId: leo.id,
       foodType: 'コオロギ',
-      fedAt: '2026-01-01T00:00:00.000Z',
+      occurredAt: '2026-01-01T00:00:00.000Z',
     });
     await feedings.create(ownerId, {
       petId: nana.id,
       foodType: 'デュビア',
-      fedAt: '2026-01-02T00:00:00.000Z',
+      occurredAt: '2026-01-02T00:00:00.000Z',
     });
 
     const { getAllByText, getByText } = await render(<LogsScreen />, { wrapper });
