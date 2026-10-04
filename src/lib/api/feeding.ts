@@ -1,13 +1,13 @@
 import { z } from 'zod';
 
-// 餌やり記録のドメインモデルとバリデーション。gecko と同じく camelCase で統一。
+// 餌やり記録のドメインモデルとバリデーション。pet と同じく camelCase で統一。
 
 export const feedingResultSchema = z.enum(['eaten', 'left', 'refused']);
 export type FeedingResult = z.infer<typeof feedingResultSchema>; // 完食 / 残し / 拒食
 
-/** 餌やり作成時の入力。geckoId と foodType は必須。fedAt 省略時はリポジトリが現在時刻を入れる。 */
+/** 餌やり作成時の入力。petId と foodType は必須。fedAt 省略時はリポジトリが現在時刻を入れる。 */
 export const feedingCreateInputSchema = z.object({
-  geckoId: z.string().min(1),
+  petId: z.string().min(1),
   fedAt: z.string().min(1).optional(),
   foodType: z.string().trim().min(1, '餌の種類は必須です'),
   quantity: z.number().int().positive().default(1),
@@ -19,7 +19,7 @@ export const feedingCreateInputSchema = z.object({
 // 更新は全項目任意。create と違い default は持たせない
 // （zod の .partial() は default を保持してしまい、未指定項目が既定値で上書きされるため）。
 export const feedingUpdateInputSchema = z.object({
-  geckoId: z.string().min(1).optional(),
+  petId: z.string().min(1).optional(),
   fedAt: z.string().min(1).optional(),
   foodType: z.string().trim().min(1).optional(),
   quantity: z.number().int().positive().optional(),
@@ -31,14 +31,14 @@ export const feedingUpdateInputSchema = z.object({
 export type FeedingCreateInput = z.input<typeof feedingCreateInputSchema>;
 export type FeedingUpdateInput = z.input<typeof feedingUpdateInputSchema>;
 
-// フォーム用: geckoId は画面側で付与するためフォームには含めない。
-export const feedingFormSchema = feedingCreateInputSchema.omit({ geckoId: true });
+// フォーム用: petId は画面側で付与するためフォームには含めない。
+export const feedingFormSchema = feedingCreateInputSchema.omit({ petId: true });
 export type FeedingFormValues = z.input<typeof feedingFormSchema>;
 
 export interface Feeding {
   id: string;
   ownerId: string;
-  geckoId: string;
+  petId: string;
   fedAt: string;
   foodType: string;
   quantity: number;
@@ -63,9 +63,9 @@ export class FeedingNotFoundError extends Error {
 export interface FeedingRepository {
   list(ownerId: string): Promise<Feeding[]>;
   /** 指定個体の記録を fedAt 降順（新しい順）で返す。 */
-  listByGecko(ownerId: string, geckoId: string): Promise<Feeding[]>;
+  listByPet(ownerId: string, petId: string): Promise<Feeding[]>;
   /** 指定個体の最新の記録。なければ null。 */
-  latestForGecko(ownerId: string, geckoId: string): Promise<Feeding | null>;
+  latestForPet(ownerId: string, petId: string): Promise<Feeding | null>;
   getById(ownerId: string, id: string): Promise<Feeding | null>;
   create(ownerId: string, input: FeedingCreateInput): Promise<Feeding>;
   update(ownerId: string, id: string, input: FeedingUpdateInput): Promise<Feeding>;

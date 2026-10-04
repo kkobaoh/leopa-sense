@@ -18,11 +18,11 @@ export interface FeedingLogViewProps {
   isLoading: boolean;
   isError: boolean;
   entries: FeedingLogEntry[];
-  onSelectGecko?: (geckoId: string) => void;
+  onSelectPet?: (petId: string) => void;
 }
 
 /** 全個体の餌やり記録（新しい順）。読込中・エラー・空・一覧の 4 状態を描画する。 */
-export function FeedingLogView({ isLoading, isError, entries, onSelectGecko }: FeedingLogViewProps) {
+export function FeedingLogView({ isLoading, isError, entries, onSelectPet }: FeedingLogViewProps) {
   const styles = useStyles();
   const c = useTheme();
 
@@ -48,10 +48,10 @@ export function FeedingLogView({ isLoading, isError, entries, onSelectGecko }: F
       renderItem={({ item }) => (
         <Pressable
           accessibilityRole="button"
-          onPress={() => onSelectGecko?.(item.geckoId)}
+          onPress={() => onSelectPet?.(item.petId)}
           style={styles.row}>
           <View style={styles.rowMain}>
-            <Text style={styles.geckoName}>{item.geckoName}</Text>
+            <Text style={styles.petName}>{item.petName}</Text>
             <View style={styles.summaryRow}>
               <Text style={styles.summary}>{`${item.foodType} ×${item.quantity}`}</Text>
               {item.supplement ? <Text style={styles.supplement}>サプリ</Text> : null}
@@ -81,7 +81,7 @@ const useStyles = makeThemedStyles((c) => ({
     backgroundColor: c.surface,
   },
   rowMain: { flex: 1, gap: 4 },
-  geckoName: { color: c.text, fontSize: 15, fontWeight: '700' },
+  petName: { color: c.text, fontSize: 15, fontWeight: '700' },
   summaryRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   summary: { color: c.accent, fontSize: 13 },
   supplement: {

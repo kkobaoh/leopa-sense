@@ -1,5 +1,5 @@
-import { GeckoNotFoundError } from '@/lib/api/gecko';
-import { InMemoryGeckoRepository } from '@/lib/api/gecko.memory';
+import { PetNotFoundError } from '@/lib/api/pet';
+import { InMemoryPetRepository } from '@/lib/api/pet.memory';
 
 const OWNER = 'owner-a';
 const OTHER = 'owner-b';
@@ -8,8 +8,8 @@ const OTHER = 'owner-b';
 function makeRepo() {
   let ids = 0;
   let ms = Date.parse('2026-01-01T00:00:00.000Z');
-  return new InMemoryGeckoRepository({
-    idFactory: () => `gk_${++ids}`,
+  return new InMemoryPetRepository({
+    idFactory: () => `pet_${++ids}`,
     now: () => {
       const iso = new Date(ms).toISOString();
       ms += 1000;
@@ -18,18 +18,18 @@ function makeRepo() {
   });
 }
 
-describe('InMemoryGeckoRepository', () => {
+describe('InMemoryPetRepository', () => {
   describe('create', () => {
     it('owner・生成ID・タイムスタンプ付きで保存する', async () => {
       const repo = makeRepo();
       const g = await repo.create(OWNER, { name: 'レオ' });
 
-      expect(g.id).toBe('gk_1');
+      expect(g.id).toBe('pet_1');
       expect(g.ownerId).toBe(OWNER);
       expect(g.name).toBe('レオ');
       expect(g.createdAt).toBe('2026-01-01T00:00:00.000Z');
       expect(g.updatedAt).toBe(g.createdAt);
-      expect(await repo.getById(OWNER, 'gk_1')).toEqual(g);
+      expect(await repo.getById(OWNER, 'pet_1')).toEqual(g);
     });
 
     it('省略項目は既定値になる（sex=unknown、その他 null）', async () => {
@@ -133,7 +133,7 @@ describe('InMemoryGeckoRepository', () => {
       const repo = makeRepo();
       const g = await repo.create(OWNER, { name: 'A' });
       await expect(repo.update(OTHER, g.id, { name: 'X' })).rejects.toBeInstanceOf(
-        GeckoNotFoundError,
+        PetNotFoundError,
       );
     });
 
@@ -155,7 +155,7 @@ describe('InMemoryGeckoRepository', () => {
     it('他 owner は削除できない', async () => {
       const repo = makeRepo();
       const g = await repo.create(OWNER, { name: 'A' });
-      await expect(repo.remove(OTHER, g.id)).rejects.toBeInstanceOf(GeckoNotFoundError);
+      await expect(repo.remove(OTHER, g.id)).rejects.toBeInstanceOf(PetNotFoundError);
       expect(await repo.getById(OWNER, g.id)).not.toBeNull();
     });
   });

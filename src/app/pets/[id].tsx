@@ -1,16 +1,16 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Alert } from 'react-native';
 
-import { GeckoDetailView } from '@/components/gecko-detail-view';
-import { useGecko, useRemoveGecko } from '@/lib/hooks/use-geckos';
+import { PetDetailView } from '@/components/pet-detail-view';
+import { usePet, useRemovePet } from '@/lib/hooks/use-pets';
 
-export default function GeckoDetailScreen() {
+export default function PetDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
-  const { data, isPending, isError } = useGecko(id ?? '');
-  const removeGecko = useRemoveGecko();
+  const { data, isPending, isError } = usePet(id ?? '');
+  const removePet = useRemovePet();
 
-  const geckoId = data?.id;
+  const petId = data?.id;
 
   function confirmDelete(targetId: string) {
     Alert.alert('削除しますか？', 'この個体を削除します。元に戻せません。', [
@@ -19,7 +19,7 @@ export default function GeckoDetailScreen() {
         text: '削除',
         style: 'destructive',
         onPress: async () => {
-          await removeGecko.mutateAsync(targetId);
+          await removePet.mutateAsync(targetId);
           router.back();
         },
       },
@@ -27,21 +27,21 @@ export default function GeckoDetailScreen() {
   }
 
   return (
-    <GeckoDetailView
+    <PetDetailView
       isLoading={isPending}
       isError={isError}
-      gecko={data}
+      pet={data}
       onRecordFeeding={
-        geckoId
-          ? () => router.push({ pathname: '/feedings/new', params: { geckoId } })
+        petId
+          ? () => router.push({ pathname: '/feedings/new', params: { petId } })
           : undefined
       }
       onEdit={
-        geckoId
-          ? () => router.push({ pathname: '/geckos/edit/[id]', params: { id: geckoId } })
+        petId
+          ? () => router.push({ pathname: '/pets/edit/[id]', params: { id: petId } })
           : undefined
       }
-      onDelete={geckoId ? () => confirmDelete(geckoId) : undefined}
+      onDelete={petId ? () => confirmDelete(petId) : undefined}
     />
   );
 }

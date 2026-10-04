@@ -3,7 +3,7 @@ import { act, renderHook, waitFor } from '@testing-library/react-native';
 import {
   useCreateFeeding,
   useFeedings,
-  useFeedingsByGecko,
+  useFeedingsByPet,
   useLatestFeeding,
 } from '@/lib/hooks/use-feedings';
 import { createTestWrapper } from '../../support/query-wrapper';
@@ -12,12 +12,12 @@ describe('useFeedings', () => {
   it('owner の全記録を新しい順で返す', async () => {
     const { wrapper, feedings, ownerId } = createTestWrapper();
     await feedings.create(ownerId, {
-      geckoId: 'g1',
+      petId: 'g1',
       foodType: 'A',
       fedAt: '2026-01-01T00:00:00.000Z',
     });
     await feedings.create(ownerId, {
-      geckoId: 'g2',
+      petId: 'g2',
       foodType: 'B',
       fedAt: '2026-01-02T00:00:00.000Z',
     });
@@ -29,21 +29,21 @@ describe('useFeedings', () => {
   });
 });
 
-describe('useFeedingsByGecko', () => {
+describe('useFeedingsByPet', () => {
   it('指定個体の記録を新しい順で返す', async () => {
     const { wrapper, feedings, ownerId } = createTestWrapper();
     await feedings.create(ownerId, {
-      geckoId: 'g1',
+      petId: 'g1',
       foodType: 'A',
       fedAt: '2026-01-01T00:00:00.000Z',
     });
     await feedings.create(ownerId, {
-      geckoId: 'g1',
+      petId: 'g1',
       foodType: 'B',
       fedAt: '2026-01-03T00:00:00.000Z',
     });
 
-    const { result } = await renderHook(() => useFeedingsByGecko('g1'), { wrapper });
+    const { result } = await renderHook(() => useFeedingsByPet('g1'), { wrapper });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data?.map((f) => f.foodType)).toEqual(['B', 'A']);
@@ -54,12 +54,12 @@ describe('useLatestFeeding', () => {
   it('最新の記録を返す', async () => {
     const { wrapper, feedings, ownerId } = createTestWrapper();
     await feedings.create(ownerId, {
-      geckoId: 'g1',
+      petId: 'g1',
       foodType: 'A',
       fedAt: '2026-01-01T00:00:00.000Z',
     });
     await feedings.create(ownerId, {
-      geckoId: 'g1',
+      petId: 'g1',
       foodType: 'latest',
       fedAt: '2026-01-05T00:00:00.000Z',
     });
@@ -77,10 +77,10 @@ describe('useCreateFeeding', () => {
     const { result } = await renderHook(() => useCreateFeeding(), { wrapper });
 
     await act(async () => {
-      await result.current.mutateAsync({ geckoId: 'g1', foodType: 'コオロギ' });
+      await result.current.mutateAsync({ petId: 'g1', foodType: 'コオロギ' });
     });
 
-    const list = await feedings.listByGecko(ownerId, 'g1');
+    const list = await feedings.listByPet(ownerId, 'g1');
     expect(list.map((f) => f.foodType)).toEqual(['コオロギ']);
   });
 });

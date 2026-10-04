@@ -5,8 +5,8 @@ import type { FeedingLogEntry } from '@/lib/feeding-log';
 
 const entry = (overrides: Partial<FeedingLogEntry>): FeedingLogEntry => ({
   id: 'fd',
-  geckoId: 'g1',
-  geckoName: 'レオ',
+  petId: 'g1',
+  petName: 'レオ',
   foodType: 'コオロギ',
   quantity: 1,
   result: 'eaten',
@@ -43,8 +43,8 @@ describe('FeedingLogView', () => {
         isLoading={false}
         isError={false}
         entries={[
-          entry({ id: '1', geckoName: 'レオ', foodType: 'コオロギ', quantity: 3, supplement: true }),
-          entry({ id: '2', geckoName: 'ナナ', foodType: 'デュビア', result: 'refused' }),
+          entry({ id: '1', petName: 'レオ', foodType: 'コオロギ', quantity: 3, supplement: true }),
+          entry({ id: '2', petName: 'ナナ', foodType: 'デュビア', result: 'refused' }),
         ]}
       />,
     );
@@ -56,17 +56,17 @@ describe('FeedingLogView', () => {
     expect(getByText('拒食')).toBeTruthy();
   });
 
-  it('行を押すと個体 id を渡して onSelectGecko を呼ぶ', async () => {
-    const onSelectGecko = jest.fn();
+  it('行を押すと個体 id を渡して onSelectPet を呼ぶ', async () => {
+    const onSelectPet = jest.fn();
     const { getByText } = await render(
       <FeedingLogView
         isLoading={false}
         isError={false}
-        entries={[entry({ geckoId: 'g9', geckoName: 'ポチ' })]}
-        onSelectGecko={onSelectGecko}
+        entries={[entry({ petId: 'g9', petName: 'ポチ' })]}
+        onSelectPet={onSelectPet}
       />,
     );
     await fireEvent.press(getByText('ポチ'));
-    expect(onSelectGecko).toHaveBeenCalledWith('g9');
+    expect(onSelectPet).toHaveBeenCalledWith('g9');
   });
 });

@@ -2,21 +2,21 @@ import { createContext, useContext, type ReactNode } from 'react';
 
 import {
   feedingRepo,
-  geckoRepo,
+  petRepo,
   type FeedingRepository,
-  type GeckoRepository,
+  type PetRepository,
 } from './api';
 
 // アプリが使うリポジトリ群を Context で提供する。
 // 既定はオンメモリ実装（api/index.ts）。Supabase 接続時や
 // テスト時は RepositoryProvider の value で差し替える。
 export interface Repositories {
-  geckos: GeckoRepository;
+  pets: PetRepository;
   feedings: FeedingRepository;
 }
 
 const defaultRepositories: Repositories = {
-  geckos: geckoRepo,
+  pets: petRepo,
   feedings: feedingRepo,
 };
 
@@ -36,8 +36,8 @@ export function RepositoryProvider({
   );
 }
 
-export function useGeckoRepository(): GeckoRepository {
-  return useContext(RepositoryContext).geckos;
+export function usePetRepository(): PetRepository {
+  return useContext(RepositoryContext).pets;
 }
 
 export function useFeedingRepository(): FeedingRepository {

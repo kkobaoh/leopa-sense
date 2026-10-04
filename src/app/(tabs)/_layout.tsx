@@ -15,11 +15,11 @@ export default function TabsLayout() {
       }}>
       <Tabs.Screen name="index" options={{ title: 'ホーム' }} />
       <Tabs.Screen
-        name="geckos"
+        name="pets"
         options={{
           title: '個体',
           headerRight: () => (
-            <Link href="/geckos/new" style={styles.addButton}>
+            <Link href="/pets/new" style={styles.addButton}>
               追加
             </Link>
           ),

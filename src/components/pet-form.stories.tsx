@@ -1,15 +1,15 @@
 import type { Meta, StoryObj } from '@storybook/react-native-web-vite';
 
-import { GeckoForm } from './gecko-form';
+import { PetForm } from './pet-form';
 
 const meta = {
-  title: 'Forms/GeckoForm',
-  component: GeckoForm,
+  title: 'Forms/PetForm',
+  component: PetForm,
   args: {
     // Storybook 上では送信値をコンソールに出すだけ
-    onSubmit: (values) => console.log('GeckoForm submit:', values),
+    onSubmit: (values) => console.log('PetForm submit:', values),
   },
-} satisfies Meta<typeof GeckoForm>;
+} satisfies Meta<typeof PetForm>;
 
 export default meta;
 

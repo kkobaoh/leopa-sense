@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
 
-import { geckoCreateInputSchema, type GeckoCreateInput, type GeckoSex } from '@/lib/api';
+import { petCreateInputSchema, type PetCreateInput, type PetSex } from '@/lib/api';
 import {
   Chip,
   ChipGroup,
@@ -11,25 +11,25 @@ import {
   SubmitButton,
 } from './ui/form';
 
-const SEX_OPTIONS: { value: GeckoSex; label: string }[] = [
+const SEX_OPTIONS: { value: PetSex; label: string }[] = [
   { value: 'male', label: 'オス' },
   { value: 'female', label: 'メス' },
   { value: 'unknown', label: '不明' },
 ];
 
-export interface GeckoFormProps {
-  defaultValues?: Partial<GeckoCreateInput>;
-  onSubmit: (values: GeckoCreateInput) => void | Promise<void>;
+export interface PetFormProps {
+  defaultValues?: Partial<PetCreateInput>;
+  onSubmit: (values: PetCreateInput) => void | Promise<void>;
   submitLabel?: string;
 }
 
-export function GeckoForm({ defaultValues, onSubmit, submitLabel = '保存' }: GeckoFormProps) {
+export function PetForm({ defaultValues, onSubmit, submitLabel = '保存' }: PetFormProps) {
   const {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<GeckoCreateInput>({
-    resolver: zodResolver(geckoCreateInputSchema),
+  } = useForm<PetCreateInput>({
+    resolver: zodResolver(petCreateInputSchema),
     defaultValues: {
       name: '',
       morph: null,
@@ -46,13 +46,13 @@ export function GeckoForm({ defaultValues, onSubmit, submitLabel = '保存' }: G
         label="名前"
         required
         error={errors.name?.message}
-        errorTestID="gecko-form-name-error">
+        errorTestID="pet-form-name-error">
         <Controller
           control={control}
           name="name"
           render={({ field }) => (
             <FormTextInput
-              testID="gecko-form-name"
+              testID="pet-form-name"
               placeholder="レオ"
               value={field.value ?? ''}
               onChangeText={field.onChange}
@@ -62,13 +62,13 @@ export function GeckoForm({ defaultValues, onSubmit, submitLabel = '保存' }: G
         />
       </FormField>
 
-      <FormField label="モルフ" error={errors.morph?.message} errorTestID="gecko-form-morph-error">
+      <FormField label="モルフ" error={errors.morph?.message} errorTestID="pet-form-morph-error">
         <Controller
           control={control}
           name="morph"
           render={({ field }) => (
             <FormTextInput
-              testID="gecko-form-morph"
+              testID="pet-form-morph"
               placeholder="ハイイエロー"
               value={field.value ?? ''}
               onChangeText={(t) => field.onChange(t === '' ? null : t)}
@@ -100,13 +100,13 @@ export function GeckoForm({ defaultValues, onSubmit, submitLabel = '保存' }: G
       <FormField
         label="生年月日 (YYYY-MM-DD)"
         error={errors.hatchedOn?.message}
-        errorTestID="gecko-form-hatchedOn-error">
+        errorTestID="pet-form-hatchedOn-error">
         <Controller
           control={control}
           name="hatchedOn"
           render={({ field }) => (
             <FormTextInput
-              testID="gecko-form-hatchedOn"
+              testID="pet-form-hatchedOn"
               placeholder="2024-06-01"
               autoCapitalize="none"
               value={field.value ?? ''}
@@ -120,13 +120,13 @@ export function GeckoForm({ defaultValues, onSubmit, submitLabel = '保存' }: G
       <FormField
         label="給餌間隔 (日)"
         error={errors.feedingIntervalDays?.message}
-        errorTestID="gecko-form-feedingIntervalDays-error">
+        errorTestID="pet-form-feedingIntervalDays-error">
         <Controller
           control={control}
           name="feedingIntervalDays"
           render={({ field }) => (
             <FormTextInput
-              testID="gecko-form-feedingIntervalDays"
+              testID="pet-form-feedingIntervalDays"
               placeholder="7"
               keyboardType="number-pad"
               value={field.value == null ? '' : String(field.value)}
@@ -138,7 +138,7 @@ export function GeckoForm({ defaultValues, onSubmit, submitLabel = '保存' }: G
       </FormField>
 
       <SubmitButton
-        testID="gecko-form-submit"
+        testID="pet-form-submit"
         label={submitLabel}
         onPress={handleSubmit((values) => onSubmit(values))}
       />

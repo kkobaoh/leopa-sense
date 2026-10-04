@@ -1,12 +1,12 @@
 import { Pressable, Text, View } from 'react-native';
 
-import type { Gecko } from '@/lib/api';
+import type { Pet } from '@/lib/api';
 import { feedingBadge } from '@/lib/feeding-display';
-import { SEX_LABEL } from '@/lib/gecko-display';
+import { SEX_LABEL } from '@/lib/pet-display';
 import { makeThemedStyles } from '@/lib/theme';
 
-export interface GeckoCardProps {
-  gecko: Gecko;
+export interface PetCardProps {
+  pet: Pet;
   onPress?: (id: string) => void;
   /**
    * 前回給餌日時（ISO）。
@@ -18,26 +18,26 @@ export interface GeckoCardProps {
 }
 
 /** 個体一覧で使うカード。丸アバター・名前・モルフ・性別・給餌バッジを表示する。 */
-export function GeckoCard({ gecko, onPress, lastFedAt }: GeckoCardProps) {
+export function PetCard({ pet, onPress, lastFedAt }: PetCardProps) {
   const styles = useStyles();
   // TODO(photo): photoPath があれば画像を表示する（現状は頭文字アバター）
-  const initial = gecko.name.slice(0, 1);
+  const initial = pet.name.slice(0, 1);
   const badge =
-    lastFedAt !== undefined ? feedingBadge(lastFedAt, gecko.feedingIntervalDays) : null;
+    lastFedAt !== undefined ? feedingBadge(lastFedAt, pet.feedingIntervalDays) : null;
 
   return (
     <Pressable
       accessibilityRole="button"
-      onPress={() => onPress?.(gecko.id)}
+      onPress={() => onPress?.(pet.id)}
       style={styles.card}>
       <View style={styles.avatar}>
         <Text style={styles.avatarText}>{initial}</Text>
       </View>
       <View style={styles.body}>
-        <Text style={styles.name}>{gecko.name}</Text>
+        <Text style={styles.name}>{pet.name}</Text>
         <View style={styles.metaRow}>
-          {gecko.morph ? <Text style={styles.morph}>{gecko.morph}</Text> : null}
-          <Text style={styles.sex}>{SEX_LABEL[gecko.sex]}</Text>
+          {pet.morph ? <Text style={styles.morph}>{pet.morph}</Text> : null}
+          <Text style={styles.sex}>{SEX_LABEL[pet.sex]}</Text>
         </View>
         {badge ? (
           <View style={[styles.badge, badge.overdue && styles.badgeOverdue]}>

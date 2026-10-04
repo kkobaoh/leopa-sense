@@ -1,11 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react-native-web-vite';
 
-import type { Gecko } from '@/lib/api';
-import { GeckoCard } from './gecko-card';
+import type { Pet } from '@/lib/api';
+import { PetCard } from './pet-card';
 
-function sample(overrides: Partial<Gecko> = {}): Gecko {
+function sample(overrides: Partial<Pet> = {}): Pet {
   return {
-    id: 'gk_1',
+    id: 'pet_1',
     ownerId: 'owner',
     enclosureId: null,
     name: 'レオ',
@@ -21,10 +21,10 @@ function sample(overrides: Partial<Gecko> = {}): Gecko {
 }
 
 const meta = {
-  title: 'Gecko/GeckoCard',
-  component: GeckoCard,
-  args: { gecko: sample(), onPress: (id) => console.log('press', id) },
-} satisfies Meta<typeof GeckoCard>;
+  title: 'Pet/PetCard',
+  component: PetCard,
+  args: { pet: sample(), onPress: (id) => console.log('press', id) },
+} satisfies Meta<typeof PetCard>;
 
 export default meta;
 
@@ -33,9 +33,9 @@ type Story = StoryObj<typeof meta>;
 const daysAgo = (n: number) => new Date(Date.now() - n * 86_400_000).toISOString();
 
 export const Male: Story = {};
-export const Female: Story = { args: { gecko: sample({ name: 'ナナ', sex: 'female', morph: 'タンジェリン' }) } };
-export const Unknown: Story = { args: { gecko: sample({ name: 'まめ', sex: 'unknown', morph: null }) } };
+export const Female: Story = { args: { pet: sample({ name: 'ナナ', sex: 'female', morph: 'タンジェリン' }) } };
+export const Unknown: Story = { args: { pet: sample({ name: 'まめ', sex: 'unknown', morph: null }) } };
 
 export const RecentlyFed: Story = { args: { lastFedAt: daysAgo(2) } };
-export const Overdue: Story = { args: { gecko: sample({ feedingIntervalDays: 5 }), lastFedAt: daysAgo(10) } };
+export const Overdue: Story = { args: { pet: sample({ feedingIntervalDays: 5 }), lastFedAt: daysAgo(10) } };
 export const NoFeeding: Story = { args: { lastFedAt: null } };

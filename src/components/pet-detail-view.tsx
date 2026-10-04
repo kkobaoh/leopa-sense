@@ -1,15 +1,15 @@
 import type { ReactNode } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 
-import type { Gecko } from '@/lib/api';
-import { sexLabel } from '@/lib/gecko-display';
+import type { Pet } from '@/lib/api';
+import { sexLabel } from '@/lib/pet-display';
 import { makeThemedStyles } from '@/lib/theme';
 import { LoadingState, MessageState } from './ui/screen-state';
 
-export interface GeckoDetailViewProps {
+export interface PetDetailViewProps {
   isLoading: boolean;
   isError: boolean;
-  gecko: Gecko | null | undefined;
+  pet: Pet | null | undefined;
   onEdit?: () => void;
   onDelete?: () => void;
   onRecordFeeding?: () => void;
@@ -19,37 +19,37 @@ export interface GeckoDetailViewProps {
  * 個体詳細の見た目（props のみ）。読込中・エラー・not found・詳細の 4 状態を描画する。
  * 給餌履歴・体重グラフは餌やり/体重機能の実装後に追加する。
  */
-export function GeckoDetailView({
+export function PetDetailView({
   isLoading,
   isError,
-  gecko,
+  pet,
   onEdit,
   onDelete,
   onRecordFeeding,
-}: GeckoDetailViewProps) {
+}: PetDetailViewProps) {
   const styles = useStyles();
 
-  if (isLoading) return <LoadingState testID="gecko-detail-loading" />;
+  if (isLoading) return <LoadingState testID="pet-detail-loading" />;
   if (isError) return <MessageState tone="error" title="読み込みに失敗しました" />;
-  if (!gecko) return <MessageState testID="gecko-detail-notfound" title="個体が見つかりません" />;
+  if (!pet) return <MessageState testID="pet-detail-notfound" title="個体が見つかりません" />;
 
-  const initial = gecko.name.slice(0, 1);
+  const initial = pet.name.slice(0, 1);
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.header}>
         <View style={styles.avatar}>
           <Text style={styles.avatarText}>{initial}</Text>
         </View>
-        <Text style={styles.name}>{gecko.name}</Text>
+        <Text style={styles.name}>{pet.name}</Text>
       </View>
 
       <View style={styles.rows}>
-        <Row label="モルフ" value={gecko.morph ?? '—'} />
-        <Row label="性別" value={sexLabel(gecko.sex)} />
-        <Row label="生年月日" value={gecko.hatchedOn ?? '—'} />
+        <Row label="モルフ" value={pet.morph ?? '—'} />
+        <Row label="性別" value={sexLabel(pet.sex)} />
+        <Row label="生年月日" value={pet.hatchedOn ?? '—'} />
         <Row
           label="給餌間隔"
-          value={gecko.feedingIntervalDays != null ? `${gecko.feedingIntervalDays}日` : '—'}
+          value={pet.feedingIntervalDays != null ? `${pet.feedingIntervalDays}日` : '—'}
         />
       </View>
 

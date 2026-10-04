@@ -33,12 +33,12 @@ export class InMemoryFeedingRepository implements FeedingRepository {
       .sort((a, b) => b.fedAt.localeCompare(a.fedAt));
   }
 
-  async listByGecko(ownerId: string, geckoId: string): Promise<Feeding[]> {
-    return (await this.list(ownerId)).filter((f) => f.geckoId === geckoId);
+  async listByPet(ownerId: string, petId: string): Promise<Feeding[]> {
+    return (await this.list(ownerId)).filter((f) => f.petId === petId);
   }
 
-  async latestForGecko(ownerId: string, geckoId: string): Promise<Feeding | null> {
-    const list = await this.listByGecko(ownerId, geckoId);
+  async latestForPet(ownerId: string, petId: string): Promise<Feeding | null> {
+    const list = await this.listByPet(ownerId, petId);
     return list[0] ?? null;
   }
 
@@ -53,7 +53,7 @@ export class InMemoryFeedingRepository implements FeedingRepository {
     const feeding: Feeding = {
       id: this.idFactory(),
       ownerId,
-      geckoId: parsed.geckoId,
+      petId: parsed.petId,
       fedAt: parsed.fedAt ?? ts,
       foodType: parsed.foodType,
       quantity: parsed.quantity,
@@ -73,7 +73,7 @@ export class InMemoryFeedingRepository implements FeedingRepository {
 
     const patch = feedingUpdateInputSchema.parse(input);
     const next: Feeding = { ...existing };
-    if (patch.geckoId !== undefined) next.geckoId = patch.geckoId;
+    if (patch.petId !== undefined) next.petId = patch.petId;
     if (patch.fedAt !== undefined) next.fedAt = patch.fedAt ?? existing.fedAt;
     if (patch.foodType !== undefined) next.foodType = patch.foodType;
     if (patch.quantity !== undefined) next.quantity = patch.quantity;

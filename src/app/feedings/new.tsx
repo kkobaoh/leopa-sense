@@ -6,10 +6,10 @@ import { ScreenScroll } from '@/components/ui/screen-scroll';
 import { useCreateFeeding, useLatestFeeding } from '@/lib/hooks/use-feedings';
 
 export default function NewFeedingScreen() {
-  const { geckoId } = useLocalSearchParams<{ geckoId: string }>();
+  const { petId } = useLocalSearchParams<{ petId: string }>();
   const router = useRouter();
   const createFeeding = useCreateFeeding();
-  const latest = useLatestFeeding(geckoId ?? '');
+  const latest = useLatestFeeding(petId ?? '');
 
   // 前回の内容を初期値にするため、最新記録のロードを待ってからフォームを出す
   if (latest.isPending) return <LoadingState />;
@@ -29,7 +29,7 @@ export default function NewFeedingScreen() {
             : undefined
         }
         onSubmit={async (values) => {
-          await createFeeding.mutateAsync({ geckoId: geckoId ?? '', ...values });
+          await createFeeding.mutateAsync({ petId: petId ?? '', ...values });
           router.back();
         }}
       />

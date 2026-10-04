@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-native-web-vite';
 
-import type { Gecko } from '@/lib/api';
-import { GeckoListView } from './gecko-list-view';
+import type { Pet } from '@/lib/api';
+import { PetListView } from './pet-list-view';
 
-function sample(id: string, name: string, overrides: Partial<Gecko> = {}): Gecko {
+function sample(id: string, name: string, overrides: Partial<Pet> = {}): Pet {
   return {
     id,
     ownerId: 'owner',
@@ -21,10 +21,10 @@ function sample(id: string, name: string, overrides: Partial<Gecko> = {}): Gecko
 }
 
 const meta = {
-  title: 'Gecko/GeckoListView',
-  component: GeckoListView,
-  args: { isLoading: false, isError: false, geckos: [] },
-} satisfies Meta<typeof GeckoListView>;
+  title: 'Pet/PetListView',
+  component: PetListView,
+  args: { isLoading: false, isError: false, pets: [] },
+} satisfies Meta<typeof PetListView>;
 
 export default meta;
 
@@ -35,7 +35,7 @@ export const ErrorState: Story = { args: { isError: true } };
 export const Empty: Story = {};
 export const List: Story = {
   args: {
-    geckos: [
+    pets: [
       sample('1', 'レオ', { sex: 'male', morph: 'ハイイエロー' }),
       sample('2', 'ナナ', { sex: 'female', morph: 'タンジェリン' }),
       sample('3', 'まめ', { sex: 'unknown', morph: null }),

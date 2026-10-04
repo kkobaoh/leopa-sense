@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react-native-web-vite';
 
-import type { Gecko } from '@/lib/api';
-import { GeckoDetailView } from './gecko-detail-view';
+import type { Pet } from '@/lib/api';
+import { PetDetailView } from './pet-detail-view';
 
-const gecko: Gecko = {
-  id: 'gk_1',
+const pet: Pet = {
+  id: 'pet_1',
   ownerId: 'owner',
   enclosureId: null,
   name: 'レオ',
@@ -18,23 +18,23 @@ const gecko: Gecko = {
 };
 
 const meta = {
-  title: 'Gecko/GeckoDetailView',
-  component: GeckoDetailView,
+  title: 'Pet/PetDetailView',
+  component: PetDetailView,
   args: {
     isLoading: false,
     isError: false,
-    gecko,
+    pet,
     onRecordFeeding: () => console.log('record feeding'),
     onEdit: () => console.log('edit'),
     onDelete: () => console.log('delete'),
   },
-} satisfies Meta<typeof GeckoDetailView>;
+} satisfies Meta<typeof PetDetailView>;
 
 export default meta;
 
 type Story = StoryObj<typeof meta>;
 
 export const Detail: Story = {};
-export const Loading: Story = { args: { isLoading: true, gecko: undefined } };
-export const ErrorState: Story = { args: { isError: true, gecko: undefined } };
-export const NotFound: Story = { args: { gecko: null } };
+export const Loading: Story = { args: { isLoading: true, pet: undefined } };
+export const ErrorState: Story = { args: { isError: true, pet: undefined } };
+export const NotFound: Story = { args: { pet: null } };

@@ -3,7 +3,7 @@ import { Pressable, Text, TextInput, View, type TextInputProps } from 'react-nat
 
 import { makeThemedStyles, useTheme } from '@/lib/theme';
 
-// フォーム共通部品（GeckoForm / FeedingForm で共有）。色はすべてテーマトークン。
+// フォーム共通部品（PetForm / FeedingForm で共有）。色はすべてテーマトークン。
 
 /** フォーム全体のコンテナ。 */
 export function FormContainer({ children }: { children: ReactNode }) {

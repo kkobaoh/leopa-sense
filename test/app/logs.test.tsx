@@ -10,16 +10,16 @@ import { createTestWrapper } from '../support/query-wrapper';
 
 describe('LogsScreen (route)', () => {
   it('全個体の餌やり記録を個体名付きで新しい順に表示する', async () => {
-    const { wrapper, geckos, feedings, ownerId } = createTestWrapper();
-    const leo = await geckos.create(ownerId, { name: 'レオ' });
-    const nana = await geckos.create(ownerId, { name: 'ナナ' });
+    const { wrapper, pets, feedings, ownerId } = createTestWrapper();
+    const leo = await pets.create(ownerId, { name: 'レオ' });
+    const nana = await pets.create(ownerId, { name: 'ナナ' });
     await feedings.create(ownerId, {
-      geckoId: leo.id,
+      petId: leo.id,
       foodType: 'コオロギ',
       fedAt: '2026-01-01T00:00:00.000Z',
     });
     await feedings.create(ownerId, {
-      geckoId: nana.id,
+      petId: nana.id,
       foodType: 'デュビア',
       fedAt: '2026-01-02T00:00:00.000Z',
     });
@@ -40,15 +40,15 @@ describe('LogsScreen (route)', () => {
   });
 
   it('行を押すと個体詳細へ遷移する', async () => {
-    const { wrapper, geckos, feedings, ownerId } = createTestWrapper();
-    const leo = await geckos.create(ownerId, { name: 'レオ' });
-    await feedings.create(ownerId, { geckoId: leo.id, foodType: 'コオロギ' });
+    const { wrapper, pets, feedings, ownerId } = createTestWrapper();
+    const leo = await pets.create(ownerId, { name: 'レオ' });
+    await feedings.create(ownerId, { petId: leo.id, foodType: 'コオロギ' });
 
     const { getByText } = await render(<LogsScreen />, { wrapper });
     await waitFor(() => expect(getByText('レオ')).toBeTruthy());
 
     await fireEvent.press(getByText('レオ'));
 
-    expect(mockPush).toHaveBeenCalledWith({ pathname: '/geckos/[id]', params: { id: leo.id } });
+    expect(mockPush).toHaveBeenCalledWith({ pathname: '/pets/[id]', params: { id: leo.id } });
   });
 });

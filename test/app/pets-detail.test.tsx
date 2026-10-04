@@ -9,16 +9,16 @@ jest.mock('expo-router', () => ({
   useRouter: () => ({ back: mockBack, push: jest.fn(), navigate: jest.fn() }),
 }));
 
-import GeckoDetailScreen from '../../src/app/geckos/[id]';
+import PetDetailScreen from '../../src/app/pets/[id]';
 import { createTestWrapper } from '../support/query-wrapper';
 
-describe('GeckoDetailScreen (route)', () => {
+describe('PetDetailScreen (route)', () => {
   it('指定 id の個体を表示する', async () => {
-    const { wrapper, geckos, ownerId } = createTestWrapper();
-    const g = await geckos.create(ownerId, { name: 'レオ', morph: 'ノーマル' });
+    const { wrapper, pets, ownerId } = createTestWrapper();
+    const g = await pets.create(ownerId, { name: 'レオ', morph: 'ノーマル' });
     mockParams = { id: g.id };
 
-    const { getByText } = await render(<GeckoDetailScreen />, { wrapper });
+    const { getByText } = await render(<PetDetailScreen />, { wrapper });
 
     await waitFor(() => expect(getByText('レオ')).toBeTruthy());
     expect(getByText('ノーマル')).toBeTruthy();
@@ -28,14 +28,14 @@ describe('GeckoDetailScreen (route)', () => {
     const { wrapper } = createTestWrapper();
     mockParams = { id: 'missing' };
 
-    const { getByText } = await render(<GeckoDetailScreen />, { wrapper });
+    const { getByText } = await render(<PetDetailScreen />, { wrapper });
 
     await waitFor(() => expect(getByText('個体が見つかりません')).toBeTruthy());
   });
 
   it('削除を確定すると個体を消して前の画面に戻る', async () => {
-    const { wrapper, geckos, ownerId } = createTestWrapper();
-    const g = await geckos.create(ownerId, { name: 'レオ' });
+    const { wrapper, pets, ownerId } = createTestWrapper();
+    const g = await pets.create(ownerId, { name: 'レオ' });
     mockParams = { id: g.id };
 
     // Alert の確認で「削除」(destructive) を自動で押す
@@ -48,13 +48,13 @@ describe('GeckoDetailScreen (route)', () => {
         del?.onPress?.();
       });
 
-    const { getByText } = await render(<GeckoDetailScreen />, { wrapper });
+    const { getByText } = await render(<PetDetailScreen />, { wrapper });
     await waitFor(() => expect(getByText('レオ')).toBeTruthy());
 
     await fireEvent.press(getByText('削除'));
 
     await waitFor(() => expect(mockBack).toHaveBeenCalledTimes(1));
-    expect(await geckos.getById(ownerId, g.id)).toBeNull();
+    expect(await pets.getById(ownerId, g.id)).toBeNull();
 
     alertSpy.mockRestore();
   });

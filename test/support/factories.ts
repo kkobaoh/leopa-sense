@@ -1,9 +1,9 @@
-import type { Gecko } from '@/lib/api';
+import type { Pet } from '@/lib/api';
 
-/** テスト用の Gecko を作る。必要な項目だけ上書きできる。 */
-export function makeGecko(overrides: Partial<Gecko> = {}): Gecko {
+/** テスト用の Pet を作る。必要な項目だけ上書きできる。 */
+export function makePet(overrides: Partial<Pet> = {}): Pet {
   return {
-    id: 'gk_test',
+    id: 'pet_test',
     ownerId: 'owner',
     enclosureId: null,
     name: 'テスト個体',

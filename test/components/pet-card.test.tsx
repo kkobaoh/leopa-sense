@@ -1,12 +1,12 @@
 import { fireEvent, render } from '@testing-library/react-native';
 
-import { GeckoCard } from '@/components/gecko-card';
-import { makeGecko } from '../support/factories';
+import { PetCard } from '@/components/pet-card';
+import { makePet } from '../support/factories';
 
-describe('GeckoCard', () => {
+describe('PetCard', () => {
   it('名前とモルフを表示する', async () => {
     const { getByText } = await render(
-      <GeckoCard gecko={makeGecko({ name: 'レオ', morph: 'ノーマル' })} />,
+      <PetCard pet={makePet({ name: 'レオ', morph: 'ノーマル' })} />,
     );
     expect(getByText('レオ')).toBeTruthy();
     expect(getByText('ノーマル')).toBeTruthy();
@@ -14,7 +14,7 @@ describe('GeckoCard', () => {
 
   it('性別ラベルを表示する', async () => {
     const { getByText } = await render(
-      <GeckoCard gecko={makeGecko({ name: 'ナナ', sex: 'female' })} />,
+      <PetCard pet={makePet({ name: 'ナナ', sex: 'female' })} />,
     );
     expect(getByText('メス')).toBeTruthy();
   });
@@ -22,7 +22,7 @@ describe('GeckoCard', () => {
   it('押すと id を渡して onPress を呼ぶ', async () => {
     const onPress = jest.fn();
     const { getByText } = await render(
-      <GeckoCard gecko={makeGecko({ id: 'g1', name: 'ポチ' })} onPress={onPress} />,
+      <PetCard pet={makePet({ id: 'g1', name: 'ポチ' })} onPress={onPress} />,
     );
     await fireEvent.press(getByText('ポチ'));
     expect(onPress).toHaveBeenCalledWith('g1');
@@ -30,7 +30,7 @@ describe('GeckoCard', () => {
 
   it('lastFedAt が null なら「給餌記録なし」バッジを表示する', async () => {
     const { getByText } = await render(
-      <GeckoCard gecko={makeGecko({ name: 'レオ' })} lastFedAt={null} />,
+      <PetCard pet={makePet({ name: 'レオ' })} lastFedAt={null} />,
     );
     expect(getByText('給餌記録なし')).toBeTruthy();
   });
@@ -38,13 +38,13 @@ describe('GeckoCard', () => {
   it('lastFedAt があれば「前回給餌 ◯日前」を表示する', async () => {
     const twoDaysAgo = new Date(Date.now() - 2 * 86_400_000).toISOString();
     const { getByText } = await render(
-      <GeckoCard gecko={makeGecko({ name: 'レオ' })} lastFedAt={twoDaysAgo} />,
+      <PetCard pet={makePet({ name: 'レオ' })} lastFedAt={twoDaysAgo} />,
     );
     expect(getByText('前回給餌 2日前')).toBeTruthy();
   });
 
   it('lastFedAt を渡さなければバッジを表示しない', async () => {
-    const { queryByText } = await render(<GeckoCard gecko={makeGecko({ name: 'レオ' })} />);
+    const { queryByText } = await render(<PetCard pet={makePet({ name: 'レオ' })} />);
     expect(queryByText('給餌記録なし')).toBeNull();
   });
 });

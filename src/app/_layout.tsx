@@ -20,9 +20,9 @@ export default function RootLayout() {
           <ThemeProvider value={navigationTheme(scheme)}>
             <Stack>
               <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              <Stack.Screen name="geckos/new" options={{ title: '個体を登録' }} />
-              <Stack.Screen name="geckos/[id]" options={{ title: '個体の詳細' }} />
-              <Stack.Screen name="geckos/edit/[id]" options={{ title: '個体を編集' }} />
+              <Stack.Screen name="pets/new" options={{ title: '個体を登録' }} />
+              <Stack.Screen name="pets/[id]" options={{ title: '個体の詳細' }} />
+              <Stack.Screen name="pets/edit/[id]" options={{ title: '個体を編集' }} />
               <Stack.Screen
                 name="feedings/new"
                 options={{ title: '餌やりを記録', presentation: 'modal' }}

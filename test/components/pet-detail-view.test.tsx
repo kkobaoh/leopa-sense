@@ -1,32 +1,32 @@
 import { fireEvent, render } from '@testing-library/react-native';
 
-import { GeckoDetailView } from '@/components/gecko-detail-view';
-import { makeGecko } from '../support/factories';
+import { PetDetailView } from '@/components/pet-detail-view';
+import { makePet } from '../support/factories';
 
-describe('GeckoDetailView', () => {
+describe('PetDetailView', () => {
   it('読込中はローディングを表示する', async () => {
     const { getByTestId } = await render(
-      <GeckoDetailView isLoading isError={false} gecko={undefined} />,
+      <PetDetailView isLoading isError={false} pet={undefined} />,
     );
-    expect(getByTestId('gecko-detail-loading')).toBeTruthy();
+    expect(getByTestId('pet-detail-loading')).toBeTruthy();
   });
 
   it('エラー時はエラーメッセージを表示する', async () => {
     const { getByText } = await render(
-      <GeckoDetailView isLoading={false} isError gecko={undefined} />,
+      <PetDetailView isLoading={false} isError pet={undefined} />,
     );
     expect(getByText('読み込みに失敗しました')).toBeTruthy();
   });
 
   it('個体が見つからないとき not found を表示する', async () => {
     const { getByText } = await render(
-      <GeckoDetailView isLoading={false} isError={false} gecko={null} />,
+      <PetDetailView isLoading={false} isError={false} pet={null} />,
     );
     expect(getByText('個体が見つかりません')).toBeTruthy();
   });
 
   it('個体のプロフィールを表示する', async () => {
-    const gecko = makeGecko({
+    const pet = makePet({
       name: 'レオ',
       morph: 'ノーマル',
       sex: 'male',
@@ -34,7 +34,7 @@ describe('GeckoDetailView', () => {
       feedingIntervalDays: 7,
     });
     const { getByText } = await render(
-      <GeckoDetailView isLoading={false} isError={false} gecko={gecko} />,
+      <PetDetailView isLoading={false} isError={false} pet={pet} />,
     );
     expect(getByText('レオ')).toBeTruthy();
     expect(getByText('ノーマル')).toBeTruthy();
@@ -47,10 +47,10 @@ describe('GeckoDetailView', () => {
     const onEdit = jest.fn();
     const onDelete = jest.fn();
     const { getByText } = await render(
-      <GeckoDetailView
+      <PetDetailView
         isLoading={false}
         isError={false}
-        gecko={makeGecko({ name: 'レオ' })}
+        pet={makePet({ name: 'レオ' })}
         onEdit={onEdit}
         onDelete={onDelete}
       />,
@@ -66,10 +66,10 @@ describe('GeckoDetailView', () => {
   it('onRecordFeeding を渡すと「餌やりを記録」ボタンが押せる', async () => {
     const onRecordFeeding = jest.fn();
     const { getByText } = await render(
-      <GeckoDetailView
+      <PetDetailView
         isLoading={false}
         isError={false}
-        gecko={makeGecko()}
+        pet={makePet()}
         onRecordFeeding={onRecordFeeding}
       />,
     );
@@ -80,7 +80,7 @@ describe('GeckoDetailView', () => {
 
   it('onEdit / onDelete を渡さなければボタンを表示しない', async () => {
     const { queryByText } = await render(
-      <GeckoDetailView isLoading={false} isError={false} gecko={makeGecko()} />,
+      <PetDetailView isLoading={false} isError={false} pet={makePet()} />,
     );
     expect(queryByText('編集')).toBeNull();
     expect(queryByText('削除')).toBeNull();

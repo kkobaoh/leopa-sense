@@ -1,19 +1,19 @@
 import { useRouter } from 'expo-router';
 
-import { GeckoForm } from '@/components/gecko-form';
+import { PetForm } from '@/components/pet-form';
 import { ScreenScroll } from '@/components/ui/screen-scroll';
-import { useCreateGecko } from '@/lib/hooks/use-geckos';
+import { useCreatePet } from '@/lib/hooks/use-pets';
 
-export default function NewGeckoScreen() {
+export default function NewPetScreen() {
   const router = useRouter();
-  const createGecko = useCreateGecko();
+  const createPet = useCreatePet();
 
   return (
     <ScreenScroll>
-      <GeckoForm
+      <PetForm
         submitLabel="登録"
         onSubmit={async (values) => {
-          await createGecko.mutateAsync(values);
+          await createPet.mutateAsync(values);
           router.back();
         }}
       />

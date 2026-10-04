@@ -1,38 +1,38 @@
 import { FlatList, View } from 'react-native';
 
-import type { Gecko } from '@/lib/api';
+import type { Pet } from '@/lib/api';
 import { makeThemedStyles } from '@/lib/theme';
-import { GeckoCard } from './gecko-card';
+import { PetCard } from './pet-card';
 import { LoadingState, MessageState } from './ui/screen-state';
 
-export interface GeckoListViewProps {
+export interface PetListViewProps {
   isLoading: boolean;
   isError: boolean;
-  geckos: Gecko[];
-  onSelectGecko?: (id: string) => void;
+  pets: Pet[];
+  onSelectPet?: (id: string) => void;
   /** 各個体の前回給餌日時（ISO）を返す。undefined を返すとバッジ非表示。 */
-  lastFedAtOf?: (geckoId: string) => string | null | undefined;
+  lastFedAtOf?: (petId: string) => string | null | undefined;
 }
 
 /**
  * 個体一覧の見た目（props のみ）。読込中・エラー・空・一覧の 4 状態を描画する。
- * データ取得は呼び出し側（ルート）で useGeckos から渡す。
+ * データ取得は呼び出し側（ルート）で usePets から渡す。
  */
-export function GeckoListView({
+export function PetListView({
   isLoading,
   isError,
-  geckos,
-  onSelectGecko,
+  pets,
+  onSelectPet,
   lastFedAtOf,
-}: GeckoListViewProps) {
+}: PetListViewProps) {
   const styles = useStyles();
 
-  if (isLoading) return <LoadingState testID="gecko-list-loading" />;
+  if (isLoading) return <LoadingState testID="pet-list-loading" />;
 
   if (isError) {
     return (
       <MessageState
-        testID="gecko-list-error"
+        testID="pet-list-error"
         tone="error"
         title="読み込みに失敗しました"
         hint="通信環境を確認してもう一度お試しください"
@@ -40,10 +40,10 @@ export function GeckoListView({
     );
   }
 
-  if (geckos.length === 0) {
+  if (pets.length === 0) {
     return (
       <MessageState
-        testID="gecko-list-empty"
+        testID="pet-list-empty"
         title="個体がいません"
         hint="個体を登録するとここに表示されます"
       />
@@ -54,10 +54,10 @@ export function GeckoListView({
     <FlatList
       style={styles.list}
       contentContainerStyle={styles.listContent}
-      data={geckos}
+      data={pets}
       keyExtractor={(g) => g.id}
       renderItem={({ item }) => (
-        <GeckoCard gecko={item} onPress={onSelectGecko} lastFedAt={lastFedAtOf?.(item.id)} />
+        <PetCard pet={item} onPress={onSelectPet} lastFedAt={lastFedAtOf?.(item.id)} />
       )}
       ItemSeparatorComponent={() => <View style={styles.separator} />}
     />

@@ -4,24 +4,24 @@ import { useMemo } from 'react';
 import { FeedingLogView } from '@/components/feeding-log-view';
 import { buildFeedingLog } from '@/lib/feeding-log';
 import { useFeedings } from '@/lib/hooks/use-feedings';
-import { useGeckos } from '@/lib/hooks/use-geckos';
+import { usePets } from '@/lib/hooks/use-pets';
 
 export default function LogsScreen() {
   const router = useRouter();
   const feedings = useFeedings();
-  const geckos = useGeckos();
+  const pets = usePets();
 
   const entries = useMemo(
-    () => buildFeedingLog(feedings.data ?? [], geckos.data ?? []),
-    [feedings.data, geckos.data],
+    () => buildFeedingLog(feedings.data ?? [], pets.data ?? []),
+    [feedings.data, pets.data],
   );
 
   return (
     <FeedingLogView
-      isLoading={feedings.isPending || geckos.isPending}
-      isError={feedings.isError || geckos.isError}
+      isLoading={feedings.isPending || pets.isPending}
+      isError={feedings.isError || pets.isError}
       entries={entries}
-      onSelectGecko={(id) => router.push({ pathname: '/geckos/[id]', params: { id } })}
+      onSelectPet={(id) => router.push({ pathname: '/pets/[id]', params: { id } })}
     />
   );
 }
